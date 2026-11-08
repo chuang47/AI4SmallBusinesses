@@ -1,37 +1,32 @@
-{
-  "scheduling": {
-    "label": "Scheduling",
-    "table_stakes": {
-      "shift_schedule_builder": "Build and publish shift schedules",
-      "time_off_requests": "Staff can request time off",
-      "shift_swap_approval": "Staff can swap shifts with manager approval",
-      "staff_mobile_app": "Mobile app for staff"
-    }
+[
+  {
+    "id": "staff_hiring",
+    "label": "Staff & Hiring",
+    "description": "Finding, hiring, scheduling, training and keeping workers",
+    "source": "NFIB Small Business Economic Trends, Sept 2026: labor quality and availability is the single most important problem for 26% of owners"
   },
-  "hiring": {
-    "label": "Finding candidates",
-    "table_stakes": {
-      "job_post_creation": "Create and publish job posts",
-      "applicant_tracking": "Track applicants through stages",
-      "candidate_messaging": "Message candidates in the tool",
-      "mobile_apply": "Candidates can apply from a phone"
-    }
+  {
+    "id": "money_bookkeeping",
+    "label": "Money & Bookkeeping",
+    "description": "Bookkeeping, invoices, taxes, payroll, cash flow and rising costs",
+    "source": "NFIB Small Business Economic Trends, Sept 2026: inflation and costs is the single most important problem for 20% of owners"
   },
-  "inventory_waste": {
-    "label": "Inventory and waste",
-    "table_stakes": {
-      "stock_count_tracking": "Track stock levels",
-      "low_stock_alerts": "Low-stock alerts",
-      "supplier_ordering": "Create and send supplier orders",
-      "item_cost_tracking": "Track ingredient or item costs"
-    }
+  {
+    "id": "marketing_customers",
+    "label": "Marketing & Customers",
+    "description": "Getting more customers and sales: marketing, social media, design, reviews, answering customer questions and calls",
+    "source": "NFIB Small Business Economic Trends, Sept 2026: poor sales is the single most important problem for 11% of owners"
   },
-  "marketing": {
-    "label": "Marketing",
-    "table_stakes": {
-      "social_post_scheduling": "Schedule social media posts",
-      "email_campaigns": "Send email campaigns",
-      "template_library": "Ready-made templates"
-    }
+  {
+    "id": "daily_operations",
+    "label": "Daily Operations",
+    "description": "Repetitive admin, manual data entry, inventory and supplies, written processes, connecting apps",
+    "source": null
+  },
+  {
+    "id": "legal_paperwork",
+    "label": "Legal & Paperwork",
+    "description": "Contracts, legal forms, policies, permits and compliance",
+    "source": null
   }
-}
+]

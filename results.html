@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Your Tools</title>
+  <title>Your Tools · Main Street AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,400&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,8 +24,10 @@
         <p class="label">Here's what we understood <a href="index.html#review" aria-label="Edit your answers">Edit</a></p>
         <dl id="understood"></dl>
       </section>
-      <p class="hint" id="hint">Tick 2-3 tools to compare them side by side.</p>
+      <p class="hint" id="hint">Select up to 3 tools to see your monthly total and compare them side by side.</p>
+      <p class="hint" id="shopNote"></p>
       <div id="cards"></div>
+      <p class="picks" id="picks" role="status" hidden></p>
       <section id="compare" hidden aria-labelledby="compareTitle">
         <h2 class="label" id="compareTitle">Compare</h2>
         <div class="table-wrap"><table id="compareTable"><caption class="sr-only">Side-by-side comparison of the tools you selected</caption></table></div>
@@ -44,7 +46,7 @@
     const neverAnswered = !useSample && (!Array.isArray(responses) || responses.length === 0);
     if (neverAnswered) location.replace("index.html");
     const $ = (id) => document.getElementById(id);
-    let categories, problems, data;
+    let categories, checks, data;
     const selected = new Set();
 
     function el(tag, props = {}, ...children) {
@@ -52,7 +54,10 @@
       node.append(...children);
       return node;
     }
-    const price = (p) => (p == null ? "Price not published" : `$${Number.isInteger(p) ? p : p.toFixed(2)}/month`);
+    const money = (n) => `$${Number.isInteger(n) ? n : n.toFixed(2)}`;
+    const price = (t) =>
+      t.price_monthly != null ? `${money(t.price_monthly)}/month` : t.custom_pricing ? "Contact sales for pricing" : "Price not published";
+    const labelOf = (id) => (categories.find((c) => c.id === id) || {}).label || id;
 
     function show(which) {
       for (const id of ["loading", "error", "content"]) $(id).hidden = id !== which;
@@ -67,7 +72,10 @@
     async function load() {
       show("loading");
       try {
-        [categories, problems] = await Promise.all([getJson("data/categories.json"), getJson("data/problems.json")]);
+        let config;
+        [categories, checks, config] = await Promise.all(
+          ["categories", "checks", "config"].map((f) => getJson(`data/${f}.json`)));
+        $("shopNote").textContent = `Prices are for a business with ${config.reference_shop}.`;
         const key = JSON.stringify(responses);
         let cached = null;
         try { cached = JSON.parse(localStorage.getItem("results")); } catch {}
@@ -102,7 +110,7 @@
       const first = responses[0] && responses[0].answer;
       const name = (typeof first === "string" && first.trim()) || "";
       const business = [name, profile.business_type && `(${profile.business_type})`].filter(Boolean).join(" ");
-      const problemLabels = problems.filter((p) => profile.problems.includes(p.id)).map((p) => p.label);
+      const problemLabels = profile.problems.map(labelOf);
 
       $("understood").replaceChildren(
         el("dt", { textContent: "Business" }), el("dd", { textContent: business || "Not given" }),
@@ -112,39 +120,43 @@
 
       if (recommendations.length === 0) {
         $("hint").hidden = true;
+        $("shopNote").hidden = true;
         $("compare").hidden = true;
-        const covered = Object.values(categories).map((c) => c.label.toLowerCase()).join(", ");
+        const covered = categories.map((c) => c.label.toLowerCase()).join(", ");
         // Understood the problem but have no tools for it, vs. didn't recognise a problem at all.
         const message = problemLabels.length
-          ? `We understood your challenge, but we don't have tools for it in our catalog yet. We currently cover: ${covered}.`
+          ? `We understood your challenge (${problemLabels.join(", ").toLowerCase()}), but we don't have tools for it in our catalog yet.`
           : `We couldn't match your answers to a problem we cover yet (${covered}). Try editing your answers to say more about your biggest challenge.`;
         $("cards").replaceChildren(el("p", { className: "status", textContent: message }));
         return;
       }
       $("hint").hidden = recommendations.length < 2;
+      $("shopNote").hidden = false;
       $("cards").replaceChildren(...recommendations.map(card));
       renderCompare();
     }
 
     function card(rec) {
-      const [have, total] = rec.feature_coverage.split("/");
       const box = el("input", { type: "checkbox", checked: selected.has(rec.name) });
-      box.setAttribute("aria-label", `Compare ${rec.name}`);
+      box.setAttribute("aria-label", `Select ${rec.name}`);
       box.addEventListener("change", () => {
         box.checked ? selected.add(rec.name) : selected.delete(rec.name);
         renderCompare();
       });
       return el("article", { className: "card" },
+        el("div", { className: "tags" },
+          el("span", { className: "sr-only", textContent: "Helps with: " }),
+          el("span", { className: "tag", textContent: labelOf(rec.category) })),
         el("div", { className: "card-head" },
           el("h2", { textContent: rec.name }),
           el("span", { className: "match" },
             el("span", { textContent: `${rec.match}/5`, ariaHidden: "true" }),
             el("span", { className: "sr-only", textContent: `Match ${rec.match} out of 5` }))),
-        el("p", { className: "meta", textContent: `${price(rec.price_monthly)} · ${have} of ${total} features` }),
+        el("p", { className: "meta", textContent: [price(rec), rec.price_note].filter(Boolean).join(" · ") }),
         el("p", { textContent: rec.summary }),
         el("ul", { className: "reasons" }, ...rec.reasons.map((r) => el("li", { textContent: r }))),
         el("div", { className: "card-foot" },
-          el("label", {}, box, " Compare"),
+          el("label", {}, box, " Select"),
           el("a", { href: rec.source_url, target: "_blank", rel: "noopener", textContent: "Source", ariaLabel: `${rec.name} pricing source (opens in a new tab)` })),
       );
     }
@@ -155,33 +167,39 @@
         b.disabled = !b.checked && selected.size >= MAX_COMPARE;
       });
       const tools = data.recommendations.filter((r) => selected.has(r.name));
+
+      // Running total of the tools they picked. Unpublished prices are named, never guessed.
+      $("picks").hidden = tools.length === 0;
+      if (tools.length) {
+        const priced = tools.filter((t) => t.price_monthly != null);
+        const total = priced.reduce((sum, t) => sum + t.price_monthly, 0);
+        const unpriced = tools.length - priced.length;
+        const amount = priced.length ? `${money(total)}/month` : "";
+        const extra = unpriced ? `${unpriced} without a listed price` : "";
+        $("picks").textContent = `Your picks: ${tools.map((t) => t.name).join(" + ")} = ${[amount, extra].filter(Boolean).join(" + ")}`;
+      }
+
       $("compare").hidden = tools.length < 2;
       if (tools.length < 2) return;
 
-      const cats = [...new Set(tools.map((t) => t.category))];
-      const mixed = cats.length > 1;
       const row = (label, cells) =>
-        el("tr", {}, el("th", { scope: "row", textContent: label }), ...cells.map((c) => el("td", {}, c)));
-      const group = (label) =>
-        el("tr", { className: "group" }, el("th", { colSpan: tools.length + 1, textContent: label }));
+        el("tr", {}, el("th", { scope: "row", textContent: label }), ...cells.map((c) => el("td", {}, ...[].concat(c))));
       // ✓ / – on screen; "Yes" / "No" for screen readers.
       const mark = (yes) => [
         el("span", { textContent: yes ? "✓" : "–", ariaHidden: "true" }),
         el("span", { className: "sr-only", textContent: yes ? "Yes" : "No" }),
       ];
-      const featureRows = (cat, list) =>
-        Object.entries(list).map(([key, desc]) =>
-          el("tr", {}, el("th", { scope: "row", textContent: desc }),
-            ...tools.map((t) => el("td", {}, ...mark(t.category === cat && t.features[key])))));
 
       const names = el("tr", { className: "names" },
         el("td"), ...tools.map((t) => el("th", { scope: "col", textContent: t.name })));
-      const rows = [names, row("Price", tools.map((t) => price(t.price_monthly)))];
-      for (const cat of cats) {
-        const suffix = mixed ? ` · ${categories[cat].label}` : "";
-        rows.push(group("Core features" + suffix), ...featureRows(cat, categories[cat].table_stakes));
-      }
-      rows.push(row("Last verified", tools.map((t) => t.last_verified)));
+      const rows = [
+        names,
+        row("Price", tools.map(price)),
+        row("Helps with", tools.map((t) => labelOf(t.category))),
+        el("tr", { className: "group" }, el("th", { colSpan: tools.length + 1, textContent: "Small-business checks" })),
+        ...Object.entries(checks).map(([key, desc]) => row(desc, tools.map((t) => mark(t.features[key])))),
+        row("Last verified", tools.map((t) => t.last_verified)),
+      ];
       $("compareTable").replaceChildren($("compareTable").querySelector("caption"), ...rows);
     }
 

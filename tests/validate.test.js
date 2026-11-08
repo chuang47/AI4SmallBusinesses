@@ -1,13 +1,9 @@
 // Run: node --test
 const test = require("node:test");
 const assert = require("node:assert");
-const { validate } = require("../scripts/validate");
+const { validate, loadData } = require("../scripts/validate");
 
-const real = () => JSON.parse(JSON.stringify({
-  tools: require("../data/tools.json"),
-  categories: require("../data/categories.json"),
-  problems: require("../data/problems.json"),
-}));
+const real = () => JSON.parse(JSON.stringify(loadData()));
 // Apply a change to a fresh copy of the real data and return the errors.
 const errorsAfter = (change) => { const d = real(); change(d); return validate(d); };
 const expectError = (change, pattern) => {
@@ -19,49 +15,43 @@ test("real data passes", () => {
   assert.deepStrictEqual(validate(real()), []);
 });
 
-test("null price is allowed", () => {
-  assert.deepStrictEqual(errorsAfter((d) => { d.tools[0].price_monthly = null; }), []);
+test("null price and an empty price note are allowed", () => {
+  assert.deepStrictEqual(errorsAfter((d) => { d.tools[0].price_monthly = null; d.tools[0].price_note = ""; }), []);
 });
 
-test("(a) missing or empty required fields", () => {
-  for (const field of ["name", "category", "price_monthly", "features", "summary", "last_verified", "source_url"]) {
-    expectError((d) => { delete d.tools[1][field]; }, new RegExp(`missing "${field}"|unknown category`));
+test("missing or empty required fields", () => {
+  for (const field of ["name", "category", "price_monthly", "custom_pricing", "price_note", "summary", "features", "source_url", "last_verified"]) {
+    expectError((d) => { delete d.tools[1][field]; }, new RegExp(`missing "${field}"`));
   }
-  expectError((d) => { d.tools[0].summary = ""; }, /"summary" is empty/);
+  for (const field of ["summary", "source_url", "last_verified"]) {
+    expectError((d) => { d.tools[0][field] = "  "; }, new RegExp(`"${field}" is empty`));
+  }
 });
 
-test("bad prices", () => {
+test("bad prices and flags", () => {
   expectError((d) => { d.tools[0].price_monthly = -5; }, /price_monthly must be/);
   expectError((d) => { d.tools[0].price_monthly = "35"; }, /price_monthly must be/);
   expectError((d) => { d.tools[0].price_monthly = NaN; }, /price_monthly must be/);
+  expectError((d) => { d.tools[0].custom_pricing = "TRUE"; }, /custom_pricing must be true or false/);
+  expectError((d) => { d.tools[0].price_note = 5; }, /price_note must be text/);
 });
 
-test("(b) features must match the category checklist exactly", () => {
-  expectError((d) => { delete d.tools[0].features.time_off_requests; }, /missing feature "time_off_requests"/);
-  expectError((d) => { d.tools[0].features.bogus = true; }, /unexpected feature "bogus"/);
-  expectError((d) => { d.tools[0].features.time_off_requests = "yes"; }, /must be true or false/);
+test("each tool answers exactly the shared checks", () => {
+  expectError((d) => { delete d.tools[0].features.mobile_app; }, /missing check "mobile_app"/);
+  expectError((d) => { d.tools[0].features.bogus = true; }, /unexpected check "bogus"/);
+  expectError((d) => { d.tools[0].features.mobile_app = "yes"; }, /must be true or false/);
+  expectError((d) => { d.checks = {}; }, /no checks/);
+});
+
+test("categories: known, unique, labelled", () => {
   expectError((d) => { d.tools[0].category = "nope"; }, /unknown category "nope"/);
+  expectError((d) => { d.categories[1].id = d.categories[0].id; }, /duplicate id/);
+  expectError((d) => { delete d.categories[0].label; }, /"label" is missing/);
+  expectError((d) => { d.categories[0].description = ""; }, /"description" is missing/);
 });
 
-test("(c) feature keys can't be shared between categories", () => {
-  expectError((d) => { d.categories.marketing.table_stakes.low_stock_alerts = "dup"; }, /"low_stock_alerts" is in both/);
-});
-
-test("(d) problems must point at real categories, with unique ids", () => {
-  expectError((d) => { d.problems[0].categories.push("nope"); }, /unknown category "nope"/);
-  expectError((d) => { d.problems[0].categories = []; }, /needs at least one category/);
-  expectError((d) => { d.problems[1].id = d.problems[0].id; }, /duplicate id/);
-});
-
-test("categories need at least one core feature (else scoring divides by zero)", () => {
-  expectError((d) => { d.categories.marketing.table_stakes = {}; }, /"marketing" has no table_stakes/);
-});
-
-test("tool names must be unique (compare table uses them)", () => {
+test("names unique; links are web links; dates are YYYY-MM-DD", () => {
   expectError((d) => { d.tools[1].name = d.tools[0].name; }, /duplicate tool name/);
-});
-
-test("source_url must be a web link; last_verified must be a date", () => {
   expectError((d) => { d.tools[0].source_url = "javascript:alert(1)"; }, /source_url must start with http/);
   expectError((d) => { d.tools[0].source_url = "example.com"; }, /source_url must start with http/);
   expectError((d) => { d.tools[0].last_verified = "Nov 8"; }, /YYYY-MM-DD/);

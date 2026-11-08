@@ -43,20 +43,41 @@ main {
   border: 0;
 }
 
-textarea {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 90px;
-  padding: 12px;
-  font: inherit;
-  color: #111;
-  border: 1px solid #8f8f8f; /* 3:1 against white, so the box edge is visible */
-  border-radius: 6px;
-  resize: vertical;
+/* Anything marked hidden stays hidden, even if a rule below sets display. */
+[hidden] {
+  display: none !important;
 }
 
-/* Clear focus ring for keyboard users on every interactive element. */
-textarea:focus,
+/* Answer field: a single line to write on, not a box. Grows with the text (see index.html). */
+textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 0;
+  font: inherit;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #111;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #8f8f8f; /* 3:1 against white, so the line is visible */
+  border-radius: 0;
+  resize: none;
+  overflow: hidden;
+}
+
+textarea::placeholder {
+  color: #767676; /* lightest grey that still passes contrast */
+}
+
+/* Focus: the line darkens and thickens (no box outline, no layout shift). */
+textarea:focus {
+  outline: none;
+  border-bottom-color: #111;
+  box-shadow: 0 1px 0 #111;
+}
+
+/* Clear focus ring for keyboard users on buttons, links and checkboxes. */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
@@ -88,6 +109,32 @@ button:hover {
   margin-left: auto;
 }
 
+.buttons.centered #next {
+  margin-left: 0;
+}
+
+/* Intro screen */
+.brand {
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(44px, 11vw, 72px); /* big on desktop, still fits a phone */
+  line-height: 1.1;
+  margin: 0 0 16px;
+}
+
+.intro-note {
+  color: #666;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.eta {
+  color: #666;
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+
 /* Review step */
 .review {
   text-align: left;
@@ -101,8 +148,8 @@ button:hover {
 }
 
 .review textarea {
-  margin-top: 6px;
-  min-height: 60px;
+  margin-top: 2px;
+  font-size: 17px;
 }
 
 .nudge {
@@ -169,6 +216,32 @@ a {
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tag {
+  font-size: 12px;
+  color: #444;
+  background: #f1f1f1;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+/* Sticks to the bottom of the screen while scrolling the cards. */
+.picks {
+  position: sticky;
+  bottom: 0;
+  margin: 0;
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  font-size: 15px;
 }
 
 .card-head {

@@ -2,49 +2,29 @@
   "profile": {
     "business_type": "coffee shop",
     "problems": [
-      "scheduling",
-      "costs_waste"
+      "staff_hiring",
+      "daily_operations"
     ],
     "budget": 100
   },
   "recommendations": [
     {
-      "name": "Mock Scheduler A",
-      "category": "scheduling",
-      "price_monthly": 35,
-      "summary": "MOCK DATA: simple scheduling for cafes with part-time hourly staff",
-      "match": 4.5,
-      "feature_coverage": "4/4",
-      "features": {
-        "shift_schedule_builder": true,
-        "time_off_requests": true,
-        "shift_swap_approval": true,
-        "staff_mobile_app": true
-      },
-      "reasons": [
-        "Helps with: covering shifts and managing staff hours",
-        "Covers 4 of 4 features on our Scheduling checklist",
-        "Within your $100/month budget"
-      ],
-      "source_url": "https://example.com/mock-scheduler-a",
-      "last_verified": "2026-11-08"
-    },
-    {
       "name": "Mock Inventory A",
-      "category": "inventory_waste",
+      "category": "daily_operations",
       "price_monthly": 50,
-      "summary": "MOCK DATA: stock counts and supplier orders for a single cafe",
-      "match": 4.5,
+      "custom_pricing": false,
+      "price_note": "",
+      "summary": "MOCK DATA: tracks supplies and suggests what to reorder",
+      "match": 5,
       "feature_coverage": "4/4",
       "features": {
-        "stock_count_tracking": true,
-        "low_stock_alerts": true,
-        "supplier_ordering": true,
-        "item_cost_tracking": true
+        "free_trial": true,
+        "month_to_month": true,
+        "mobile_app": true,
+        "works_with_common_tools": true
       },
       "reasons": [
-        "Helps with: rising costs and waste",
-        "Covers 4 of 4 features on our Inventory and waste checklist",
+        "Passes 4 of 4 small-business checks",
         "Within your $100/month budget"
       ],
       "source_url": "https://example.com/mock-inventory-a",
@@ -52,41 +32,65 @@
     },
     {
       "name": "Mock Scheduler B",
-      "category": "scheduling",
+      "category": "staff_hiring",
       "price_monthly": 80,
-      "summary": "MOCK DATA: complete scheduling, priced higher",
-      "match": 4.5,
+      "custom_pricing": false,
+      "price_note": "Billed monthly",
+      "summary": "MOCK DATA: scheduling plus AI forecasts of how many staff you need",
+      "match": 5,
       "feature_coverage": "4/4",
       "features": {
-        "shift_schedule_builder": true,
-        "time_off_requests": true,
-        "shift_swap_approval": true,
-        "staff_mobile_app": true
+        "free_trial": true,
+        "month_to_month": true,
+        "mobile_app": true,
+        "works_with_common_tools": true
       },
       "reasons": [
-        "Helps with: covering shifts and managing staff hours",
-        "Covers 4 of 4 features on our Scheduling checklist",
+        "Passes 4 of 4 small-business checks",
         "Within your $100/month budget"
       ],
       "source_url": "https://example.com/mock-scheduler-b",
       "last_verified": "2026-11-08"
     },
     {
-      "name": "Mock Inventory C",
-      "category": "inventory_waste",
-      "price_monthly": 20,
-      "summary": "MOCK DATA: budget stock tracker without supplier ordering",
-      "match": 4,
+      "name": "Mock Scheduler A",
+      "category": "staff_hiring",
+      "price_monthly": 35,
+      "custom_pricing": false,
+      "price_note": "",
+      "summary": "MOCK DATA: drafts weekly shift schedules for hourly staff",
+      "match": 4.5,
       "feature_coverage": "3/4",
       "features": {
-        "stock_count_tracking": true,
-        "low_stock_alerts": true,
-        "supplier_ordering": false,
-        "item_cost_tracking": true
+        "free_trial": true,
+        "month_to_month": true,
+        "mobile_app": true,
+        "works_with_common_tools": false
       },
       "reasons": [
-        "Helps with: rising costs and waste",
-        "Covers 3 of 4 features on our Inventory and waste checklist",
+        "Passes 3 of 4 small-business checks",
+        "Within your $100/month budget"
+      ],
+      "source_url": "https://example.com/mock-scheduler-a",
+      "last_verified": "2026-11-08"
+    },
+    {
+      "name": "Mock Inventory C",
+      "category": "daily_operations",
+      "price_monthly": 20,
+      "custom_pricing": false,
+      "price_note": "",
+      "summary": "MOCK DATA: budget stock tracker that reads supplier invoices",
+      "match": 3.5,
+      "feature_coverage": "2/4",
+      "features": {
+        "free_trial": true,
+        "month_to_month": true,
+        "mobile_app": false,
+        "works_with_common_tools": false
+      },
+      "reasons": [
+        "Passes 2 of 4 small-business checks",
         "Within your $100/month budget"
       ],
       "source_url": "https://example.com/mock-inventory-c",

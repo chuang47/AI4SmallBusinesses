@@ -1,86 +1,274 @@
 [
   {
     "name": "Mock Scheduler A",
-    "category": "scheduling",
+    "category": "staff_hiring",
     "price_monthly": 35,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "MOCK DATA: drafts weekly shift schedules for hourly staff",
     "features": {
-      "shift_schedule_builder": true,
-      "time_off_requests": true,
-      "shift_swap_approval": true,
-      "staff_mobile_app": true
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": false
     },
-    "summary": "MOCK DATA: simple scheduling for cafes with part-time hourly staff",
-    "last_verified": "2026-11-08",
-    "source_url": "https://example.com/mock-scheduler-a"
+    "source_url": "https://example.com/mock-scheduler-a",
+    "last_verified": "2026-11-08"
   },
   {
     "name": "Mock Scheduler B",
-    "category": "scheduling",
+    "category": "staff_hiring",
     "price_monthly": 80,
+    "custom_pricing": false,
+    "price_note": "Billed monthly",
+    "summary": "MOCK DATA: scheduling plus AI forecasts of how many staff you need",
     "features": {
-      "shift_schedule_builder": true,
-      "time_off_requests": true,
-      "shift_swap_approval": true,
-      "staff_mobile_app": true
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
     },
-    "summary": "MOCK DATA: complete scheduling, priced higher",
-    "last_verified": "2026-11-08",
-    "source_url": "https://example.com/mock-scheduler-b"
+    "source_url": "https://example.com/mock-scheduler-b",
+    "last_verified": "2026-11-08"
   },
   {
     "name": "Mock Scheduler C",
-    "category": "scheduling",
+    "category": "staff_hiring",
     "price_monthly": null,
+    "custom_pricing": true,
+    "price_note": "",
+    "summary": "MOCK DATA: AI-first scheduler sold through a sales call",
     "features": {
-      "shift_schedule_builder": true,
-      "time_off_requests": true,
-      "shift_swap_approval": false,
-      "staff_mobile_app": true
+      "free_trial": false,
+      "month_to_month": false,
+      "mobile_app": true,
+      "works_with_common_tools": true
     },
-    "summary": "MOCK DATA: scheduler with pricing by quote only",
-    "last_verified": "2026-11-08",
-    "source_url": "https://example.com/mock-scheduler-c"
+    "source_url": "https://example.com/mock-scheduler-c",
+    "last_verified": "2026-11-08"
   },
   {
     "name": "Mock Inventory A",
-    "category": "inventory_waste",
+    "category": "daily_operations",
     "price_monthly": 50,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "MOCK DATA: tracks supplies and suggests what to reorder",
     "features": {
-      "stock_count_tracking": true,
-      "low_stock_alerts": true,
-      "supplier_ordering": true,
-      "item_cost_tracking": true
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
     },
-    "summary": "MOCK DATA: stock counts and supplier orders for a single cafe",
-    "last_verified": "2026-11-08",
-    "source_url": "https://example.com/mock-inventory-a"
+    "source_url": "https://example.com/mock-inventory-a",
+    "last_verified": "2026-11-08"
   },
   {
     "name": "Mock Inventory B",
-    "category": "inventory_waste",
+    "category": "daily_operations",
     "price_monthly": 150,
+    "custom_pricing": false,
+    "price_note": "Per location, billed yearly",
+    "summary": "MOCK DATA: AI demand forecasts for ordering",
     "features": {
-      "stock_count_tracking": true,
-      "low_stock_alerts": true,
-      "supplier_ordering": true,
-      "item_cost_tracking": true
+      "free_trial": true,
+      "month_to_month": false,
+      "mobile_app": true,
+      "works_with_common_tools": true
     },
-    "summary": "MOCK DATA: everything included, priced for larger shops",
-    "last_verified": "2026-11-08",
-    "source_url": "https://example.com/mock-inventory-b"
+    "source_url": "https://example.com/mock-inventory-b",
+    "last_verified": "2026-11-08"
   },
   {
     "name": "Mock Inventory C",
-    "category": "inventory_waste",
+    "category": "daily_operations",
     "price_monthly": 20,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "MOCK DATA: budget stock tracker that reads supplier invoices",
     "features": {
-      "stock_count_tracking": true,
-      "low_stock_alerts": true,
-      "supplier_ordering": false,
-      "item_cost_tracking": true
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": false
     },
-    "summary": "MOCK DATA: budget stock tracker without supplier ordering",
-    "last_verified": "2026-11-08",
-    "source_url": "https://example.com/mock-inventory-c"
+    "source_url": "https://example.com/mock-inventory-c",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Books A",
+    "category": "money_bookkeeping",
+    "price_monthly": 27,
+    "custom_pricing": false,
+    "price_note": "Intro offer: $16.20/mo for 3 months",
+    "summary": "MOCK DATA: sorts transactions and flags tax deductions",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-books-a",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Marketer A",
+    "category": "marketing_customers",
+    "price_monthly": 0,
+    "custom_pricing": false,
+    "price_note": "Free plan; paid plans from $29",
+    "summary": "MOCK DATA: writes social posts and replies to reviews",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": false
+    },
+    "source_url": "https://example.com/mock-marketer-a",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Books B",
+    "category": "money_bookkeeping",
+    "price_monthly": 45.99,
+    "custom_pricing": false,
+    "price_note": "Billed monthly",
+    "summary": "MOCK DATA: reads receipts from photos and prepares quarterly tax estimates",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-books-b",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Books C",
+    "category": "money_bookkeeping",
+    "price_monthly": null,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "MOCK DATA: AI bookkeeper reconciles bank transactions every week",
+    "features": {
+      "free_trial": false,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-books-c",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Payroll A",
+    "category": "money_bookkeeping",
+    "price_monthly": 120,
+    "custom_pricing": false,
+    "price_note": "$40 base + $10 per employee",
+    "summary": "MOCK DATA: runs payroll and answers staff pay questions with an AI assistant",
+    "features": {
+      "free_trial": true,
+      "month_to_month": false,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-payroll-a",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Marketer B",
+    "category": "marketing_customers",
+    "price_monthly": 59,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "MOCK DATA: drafts email campaigns and suggests the best time to send",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-marketer-b",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Receptionist A",
+    "category": "marketing_customers",
+    "price_monthly": 99,
+    "custom_pricing": false,
+    "price_note": "Includes 300 calls a month",
+    "summary": "MOCK DATA: AI voice answers calls and books appointments",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-receptionist-a",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Reviews A",
+    "category": "marketing_customers",
+    "price_monthly": null,
+    "custom_pricing": true,
+    "price_note": "",
+    "summary": "MOCK DATA: watches your online reviews and drafts replies",
+    "features": {
+      "free_trial": false,
+      "month_to_month": false,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-reviews-a",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Contracts A",
+    "category": "legal_paperwork",
+    "price_monthly": 25,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "MOCK DATA: fills in common contracts and flags risky clauses",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": false
+    },
+    "source_url": "https://example.com/mock-contracts-a",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Forms A",
+    "category": "legal_paperwork",
+    "price_monthly": 0,
+    "custom_pricing": false,
+    "price_note": "Free plan; paid plans from $15",
+    "summary": "MOCK DATA: writes waivers and policies from plain-language answers",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-forms-a",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Mock Compliance A",
+    "category": "legal_paperwork",
+    "price_monthly": 300,
+    "custom_pricing": false,
+    "price_note": "Billed yearly",
+    "summary": "MOCK DATA: tracks permit and license renewal deadlines",
+    "features": {
+      "free_trial": false,
+      "month_to_month": false,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://example.com/mock-compliance-a",
+    "last_verified": "2026-11-08"
   }
 ]
