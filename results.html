@@ -31,7 +31,17 @@
       <div class="browse" id="browse">
         <div class="list-pane">
           <div class="list-tools">
-            <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+            <!-- Category filter: a dropdown of checkboxes (any mix), with select all / clear all. -->
+            <details class="filter" id="filter">
+              <summary id="filterLabel">Category: All</summary>
+              <div class="filter-menu">
+                <div class="filter-actions">
+                  <button type="button" id="filterAll">Select all</button>
+                  <button type="button" id="filterNone">Clear all</button>
+                </div>
+                <fieldset id="filterOptions"></fieldset>
+              </div>
+            </details>
             <label class="sort">Sort by
               <select id="sort">
                 <option value="match">Best match</option>
@@ -41,6 +51,7 @@
             </label>
           </div>
           <ul class="tool-list" id="list" aria-label="Recommended tools"></ul>
+          <p class="list-count" id="listCount" hidden></p>
         </div>
         <section class="detail" id="detail" aria-live="polite"></section>
         <!-- Like a receipt: each selected tool, its price, and the monthly total. -->
@@ -71,7 +82,7 @@
     let categories, checks, config, data;
     let current = null; // name of the tool shown on the right
     let sortBy = "match";
-    let filterCat = "all";
+    let filterCats = new Set(); // categories currently shown in the list
     const selected = new Set();
 
     function el(tag, props = {}, ...children) {
@@ -125,8 +136,8 @@
           });
           localStorage.setItem("results", JSON.stringify({ key, data }));
         }
+        show("content"); // visible first, so the list can measure its rows
         render();
-        show("content");
       } catch (err) {
         $("errorText").textContent =
           err.name === "TimeoutError"
@@ -163,13 +174,14 @@
           : `We couldn't match your answers to a problem we cover yet (${covered}). Try editing your answers to say more about your biggest challenge.`;
         return;
       }
+      buildFilter();
       update();
     }
 
     // The list after the category filter and sort. "Best match" keeps the API's order.
     // Price sorts put tools without a listed price last, in both directions.
     function visible() {
-      const list = data.recommendations.filter((r) => filterCat === "all" || r.category === filterCat);
+      const list = data.recommendations.filter((r) => filterCats.has(r.category));
       if (sortBy === "match") return list;
       const dir = sortBy === "price-asc" ? 1 : -1;
       return [...list].sort((a, b) => {
@@ -181,30 +193,56 @@
     // Redraw everything that depends on the filter, the open tool and the selection.
     function update() {
       const shown = visible();
-      if (!shown.some((r) => r.name === current)) current = shown[0].name;
-      renderChips();
+      if (!shown.some((r) => r.name === current)) current = shown.length ? shown[0].name : null;
+      syncFilter();
       renderList(shown);
       renderDetail();
       renderPicks();
       renderCompare();
     }
 
-    // Category chips: only the owner's own categories, and only when there's more than one.
-    function renderChips() {
-      const counts = {};
-      data.recommendations.forEach((r) => { counts[r.category] = (counts[r.category] || 0) + 1; });
-      const cats = Object.keys(counts);
-      $("chips").hidden = cats.length < 2;
-      const chip = (id, label, n) => {
-        const btn = el("button", { className: "chip", textContent: `${label} (${n})` });
-        btn.setAttribute("aria-pressed", String(filterCat === id));
-        btn.addEventListener("click", () => { filterCat = id; update(); });
-        return btn;
-      };
-      $("chips").replaceChildren(chip("all", "All", data.recommendations.length), ...cats.map((c) => chip(c, labelOf(c), counts[c])));
+    // Category filter: only the owner's own categories (with counts), and only when there's more than one.
+    const allCats = () => [...new Set(data.recommendations.map((r) => r.category))];
+    function buildFilter() {
+      const cats = allCats();
+      filterCats = new Set(cats);
+      $("filter").hidden = cats.length < 2;
+      $("filterOptions").replaceChildren(
+        el("legend", { className: "sr-only", textContent: "Show tools for these categories" }),
+        ...cats.map((c) => {
+          const box = el("input", { type: "checkbox", value: c });
+          box.addEventListener("change", () => {
+            box.checked ? filterCats.add(c) : filterCats.delete(c);
+            update();
+          });
+          const n = data.recommendations.filter((r) => r.category === c).length;
+          return el("label", {}, box, `${labelOf(c)} (${n})`);
+        }));
     }
 
+    // Keep the checkboxes and the dropdown's label in step with the current filter.
+    function syncFilter() {
+      $("filterOptions").querySelectorAll("input").forEach((box) => { box.checked = filterCats.has(box.value); });
+      const n = filterCats.size;
+      $("filterLabel").textContent = `Category: ${
+        n === allCats().length ? "All" : n === 0 ? "None" : n === 1 ? labelOf([...filterCats][0]) : `${n} selected`}`;
+    }
+
+    $("filterAll").addEventListener("click", () => { filterCats = new Set(allCats()); update(); });
+    $("filterNone").addEventListener("click", () => { filterCats = new Set(); update(); });
+    // Close the dropdown on a click outside it, or with Escape.
+    document.addEventListener("click", (e) => { if (!$("filter").contains(e.target)) $("filter").open = false; });
+    $("filter").addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && $("filter").open) { $("filter").open = false; $("filterLabel").focus(); }
+    });
+
     function renderList(shown) {
+      const scrolled = $("list").scrollTop; // redrawing must not jump the list back to the top
+      if (!shown.length) {
+        $("list").replaceChildren(el("li", { className: "list-empty", textContent: "No categories selected. Choose at least one in Category." }));
+        limitList();
+        return;
+      }
       $("list").replaceChildren(...shown.map((rec) => {
         const isPicked = selected.has(rec.name);
         const row = el("button", { className: "tool-row" + (rec.name === current ? " active" : "") },
@@ -220,10 +258,30 @@
         });
         return el("li", {}, row);
       }));
+      limitList();
+      $("list").scrollTop = scrolled;
     }
+
+    // Show 5 tools at a time; the rest scroll inside the list instead of stretching the page.
+    const VISIBLE_ROWS = 5;
+    function limitList() {
+      const list = $("list");
+      const rows = list.children;
+      list.style.maxHeight = "";
+      $("listCount").hidden = rows.length <= VISIBLE_ROWS;
+      if (rows.length <= VISIBLE_ROWS) return;
+      list.style.maxHeight = `${rows[VISIBLE_ROWS - 1].getBoundingClientRect().bottom - list.getBoundingClientRect().top}px`;
+      $("listCount").textContent = `${rows.length} tools · scroll the list for more`;
+    }
+    window.addEventListener("resize", () => { if (data) limitList(); });
+    document.fonts.ready.then(() => { if (data) limitList(); });
 
     function renderDetail() {
       const rec = data.recommendations.find((r) => r.name === current);
+      if (!rec) {
+        $("detail").replaceChildren(el("p", { className: "receipt-empty", textContent: "Pick a category to see tool details here." }));
+        return;
+      }
       const isPicked = selected.has(rec.name);
       const full = !isPicked && selected.size >= MAX_PICKS;
       const pick = el("button", { className: "pick-btn" + (isPicked ? " on" : ""), disabled: full,
@@ -267,7 +325,7 @@
         const remove = el("button", { className: "receipt-remove", textContent: "×", ariaLabel: `Remove ${t.name}` });
         remove.addEventListener("click", () => { selected.delete(t.name); update(); });
         const open = el("button", { className: "receipt-name", textContent: t.name });
-        open.addEventListener("click", () => { current = t.name; filterCat = "all"; update(); });
+        open.addEventListener("click", () => { current = t.name; filterCats.add(t.category); update(); });
         return el("li", {}, open,
           el("span", { className: "receipt-price", textContent: t.price_monthly != null ? money(t.price_monthly) : "—" }),
           remove);
