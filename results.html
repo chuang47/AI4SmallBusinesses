@@ -25,9 +25,6 @@
         <dl id="understood"></dl>
       </section>
 
-      <!-- Stays at the top of the screen: what they've picked and the monthly total. -->
-      <div class="picks" id="picks" role="status"></div>
-
       <p class="status" id="empty" hidden></p>
 
       <!-- Left: scrollable list. Right: details of the chosen tool. -->
@@ -46,6 +43,11 @@
           <ul class="tool-list" id="list" aria-label="Recommended tools"></ul>
         </div>
         <section class="detail" id="detail" aria-live="polite"></section>
+        <!-- Like a receipt: each selected tool, its price, and the monthly total. -->
+        <aside class="receipt" id="picks" aria-labelledby="picksTitle">
+          <h2 class="label" id="picksTitle">Your selection</h2>
+          <div id="picksBody"></div>
+        </aside>
       </div>
 
       <section id="compare" hidden aria-labelledby="compareTitle">
@@ -151,7 +153,6 @@
 
       const none = recommendations.length === 0;
       $("browse").hidden = none;
-      $("picks").hidden = none;
       $("empty").hidden = !none;
       if (none) {
         $("compare").hidden = true;
@@ -255,18 +256,32 @@
     function renderPicks() {
       const tools = data.recommendations.filter((r) => selected.has(r.name));
       if (!tools.length) {
-        $("picks").replaceChildren(el("span", { className: "picks-empty", textContent: `Selected tools: none yet. Add up to ${MAX_PICKS} to see your monthly total and compare them.` }));
+        $("picksBody").replaceChildren(el("p", { className: "receipt-empty", textContent: `Nothing selected yet. Add up to ${MAX_PICKS} tools to see your monthly total.` }));
         return;
       }
       const priced = tools.filter((t) => t.price_monthly != null);
       const total = priced.reduce((sum, t) => sum + t.price_monthly, 0);
       const unpriced = tools.length - priced.length;
-      const amount = priced.length ? `${money(total)}/month` : "";
-      const extra = unpriced ? `${unpriced} without a listed price` : "";
-      $("picks").replaceChildren(
-        el("span", { textContent: `Selected tools: ${tools.map((t) => t.name).join(" + ")} = ` }),
-        el("strong", { textContent: [amount, extra].filter(Boolean).join(" + ") }),
-        tools.length >= 2 ? el("a", { href: "#compare", className: "picks-link", textContent: "Compare" }) : "",
+
+      const line = (t) => {
+        const remove = el("button", { className: "receipt-remove", textContent: "×", ariaLabel: `Remove ${t.name}` });
+        remove.addEventListener("click", () => { selected.delete(t.name); update(); });
+        const open = el("button", { className: "receipt-name", textContent: t.name });
+        open.addEventListener("click", () => { current = t.name; filterCat = "all"; update(); });
+        return el("li", {}, open,
+          el("span", { className: "receipt-price", textContent: t.price_monthly != null ? money(t.price_monthly) : "—" }),
+          remove);
+      };
+
+      $("picksBody").replaceChildren(
+        el("ul", { className: "receipt-lines" }, ...tools.map(line)),
+        el("p", { className: "receipt-total", role: "status" },
+          el("span", { textContent: "Total" }),
+          el("span", { textContent: priced.length ? `${money(total)}/month` : "—" })),
+        unpriced ? el("p", { className: "receipt-note", textContent: `+ ${unpriced} without a listed price (contact the vendor)` }) : "",
+        tools.length >= 2
+          ? el("a", { href: "#compare", className: "receipt-compare", textContent: `Compare these ${tools.length}` })
+          : el("p", { className: "receipt-note", textContent: "Add another to compare side by side." }),
       );
     }
 
