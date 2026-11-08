@@ -11,23 +11,24 @@
 </head>
 <body>
   <main class="wide">
-    <p class="status" id="loading">Finding tools that fit your business...</p>
+    <h1 class="sr-only">Recommended tools for your business</h1>
+    <p class="status" id="loading" role="status">Finding tools that fit your business...</p>
 
     <div id="error" hidden>
-      <p class="status" id="errorText"></p>
+      <p class="status" id="errorText" role="alert"></p>
       <div class="buttons centered"><button id="retry">Try again</button></div>
     </div>
 
     <div id="content" hidden>
       <section class="understood">
-        <p class="label">Here's what we understood <a href="index.html#review">Edit</a></p>
+        <p class="label">Here's what we understood <a href="index.html#review" aria-label="Edit your answers">Edit</a></p>
         <dl id="understood"></dl>
       </section>
       <p class="hint" id="hint">Tick 2-3 tools to compare them side by side.</p>
       <div id="cards"></div>
-      <section id="compare" hidden>
-        <p class="label">Compare</p>
-        <div class="table-wrap"><table id="compareTable"></table></div>
+      <section id="compare" hidden aria-labelledby="compareTitle">
+        <h2 class="label" id="compareTitle">Compare</h2>
+        <div class="table-wrap"><table id="compareTable"><caption class="sr-only">Side-by-side comparison of the tools you selected</caption></table></div>
       </section>
     </div>
   </main>
@@ -36,7 +37,12 @@
     const TIMEOUT_MS = 10000;
     const MAX_COMPARE = 3;
     const useSample = new URLSearchParams(location.search).has("sample");
-    const responses = JSON.parse(localStorage.getItem("responses") || "[]");
+    let responses = [];
+    try { responses = JSON.parse(localStorage.getItem("responses")) || []; } catch {}
+    // Never went through the questions (e.g. opened this page directly): start there instead.
+    // Saved-but-empty answers still proceed, since the review step only nudges, it doesn't block.
+    const neverAnswered = !useSample && (!Array.isArray(responses) || responses.length === 0);
+    if (neverAnswered) location.replace("index.html");
     const $ = (id) => document.getElementById(id);
     let categories, problems, data;
     const selected = new Set();
@@ -46,7 +52,7 @@
       node.append(...children);
       return node;
     }
-    const price = (p) => (p == null ? "Price not published" : `$${p}/month`);
+    const price = (p) => (p == null ? "Price not published" : `$${Number.isInteger(p) ? p : p.toFixed(2)}/month`);
 
     function show(which) {
       for (const id of ["loading", "error", "content"]) $(id).hidden = id !== which;
@@ -63,7 +69,8 @@
       try {
         [categories, problems] = await Promise.all([getJson("data/categories.json"), getJson("data/problems.json")]);
         const key = JSON.stringify(responses);
-        const cached = JSON.parse(localStorage.getItem("results") || "null");
+        let cached = null;
+        try { cached = JSON.parse(localStorage.getItem("results")); } catch {}
         if (useSample) {
           data = await getJson("data/sample-response.json");
         } else if (cached && cached.key === key) {
@@ -92,7 +99,8 @@
 
     function render() {
       const { profile, recommendations } = data;
-      const name = (responses[0] && responses[0].answer.trim()) || "";
+      const first = responses[0] && responses[0].answer;
+      const name = (typeof first === "string" && first.trim()) || "";
       const business = [name, profile.business_type && `(${profile.business_type})`].filter(Boolean).join(" ");
       const problemLabels = problems.filter((p) => profile.problems.includes(p.id)).map((p) => p.label);
 
@@ -104,10 +112,13 @@
 
       if (recommendations.length === 0) {
         $("hint").hidden = true;
+        $("compare").hidden = true;
         const covered = Object.values(categories).map((c) => c.label.toLowerCase()).join(", ");
-        $("cards").replaceChildren(
-          el("p", { className: "status", textContent: `We couldn't match your answers to a problem we cover yet (${covered}). Try editing your answers to say more about your biggest challenge.` })
-        );
+        // Understood the problem but have no tools for it, vs. didn't recognise a problem at all.
+        const message = problemLabels.length
+          ? `We understood your challenge, but we don't have tools for it in our catalog yet. We currently cover: ${covered}.`
+          : `We couldn't match your answers to a problem we cover yet (${covered}). Try editing your answers to say more about your biggest challenge.`;
+        $("cards").replaceChildren(el("p", { className: "status", textContent: message }));
         return;
       }
       $("hint").hidden = recommendations.length < 2;
@@ -118,6 +129,7 @@
     function card(rec) {
       const [have, total] = rec.feature_coverage.split("/");
       const box = el("input", { type: "checkbox", checked: selected.has(rec.name) });
+      box.setAttribute("aria-label", `Compare ${rec.name}`);
       box.addEventListener("change", () => {
         box.checked ? selected.add(rec.name) : selected.delete(rec.name);
         renderCompare();
@@ -125,13 +137,15 @@
       return el("article", { className: "card" },
         el("div", { className: "card-head" },
           el("h2", { textContent: rec.name }),
-          el("span", { className: "match", textContent: `${rec.match}/5` })),
+          el("span", { className: "match" },
+            el("span", { textContent: `${rec.match}/5`, ariaHidden: "true" }),
+            el("span", { className: "sr-only", textContent: `Match ${rec.match} out of 5` }))),
         el("p", { className: "meta", textContent: `${price(rec.price_monthly)} · ${have} of ${total} features` }),
         el("p", { textContent: rec.summary }),
         el("ul", { className: "reasons" }, ...rec.reasons.map((r) => el("li", { textContent: r }))),
         el("div", { className: "card-foot" },
           el("label", {}, box, " Compare"),
-          el("a", { href: rec.source_url, target: "_blank", rel: "noopener", textContent: "Source" })),
+          el("a", { href: rec.source_url, target: "_blank", rel: "noopener", textContent: "Source", ariaLabel: `${rec.name} pricing source (opens in a new tab)` })),
       );
     }
 
@@ -146,25 +160,33 @@
 
       const cats = [...new Set(tools.map((t) => t.category))];
       const mixed = cats.length > 1;
-      const row = (label, cells, cls) =>
-        el("tr", cls ? { className: cls } : {}, el("th", { textContent: label }), ...cells.map((c) => el("td", { textContent: c })));
+      const row = (label, cells) =>
+        el("tr", {}, el("th", { scope: "row", textContent: label }), ...cells.map((c) => el("td", {}, c)));
       const group = (label) =>
         el("tr", { className: "group" }, el("th", { colSpan: tools.length + 1, textContent: label }));
+      // ✓ / – on screen; "Yes" / "No" for screen readers.
+      const mark = (yes) => [
+        el("span", { textContent: yes ? "✓" : "–", ariaHidden: "true" }),
+        el("span", { className: "sr-only", textContent: yes ? "Yes" : "No" }),
+      ];
       const featureRows = (cat, list) =>
         Object.entries(list).map(([key, desc]) =>
-          row(desc, tools.map((t) => (t.category === cat && t.features[key] ? "✓" : "–"))));
+          el("tr", {}, el("th", { scope: "row", textContent: desc }),
+            ...tools.map((t) => el("td", {}, ...mark(t.category === cat && t.features[key])))));
 
-      const rows = [row("", tools.map((t) => t.name), "names"), row("Price", tools.map((t) => price(t.price_monthly)))];
+      const names = el("tr", { className: "names" },
+        el("td"), ...tools.map((t) => el("th", { scope: "col", textContent: t.name })));
+      const rows = [names, row("Price", tools.map((t) => price(t.price_monthly)))];
       for (const cat of cats) {
         const suffix = mixed ? ` · ${categories[cat].label}` : "";
         rows.push(group("Core features" + suffix), ...featureRows(cat, categories[cat].table_stakes));
       }
       rows.push(row("Last verified", tools.map((t) => t.last_verified)));
-      $("compareTable").replaceChildren(...rows);
+      $("compareTable").replaceChildren($("compareTable").querySelector("caption"), ...rows);
     }
 
     $("retry").addEventListener("click", load);
-    load();
+    if (!neverAnswered) load();
   </script>
 </body>
 </html>

@@ -24,8 +24,10 @@ http
     }
 
     const file = path.join(ROOT, url.pathname === "/" ? "index.html" : url.pathname);
-    if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
+    // Never serve dotfiles (.env.local holds the API key) or anything outside the repo.
+    const hidden = path.relative(ROOT, file).split(path.sep).some((part) => part.startsWith("."));
+    if (!file.startsWith(ROOT) || hidden || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
     res.writeHead(200, { "Content-Type": TYPES[path.extname(file)] || "application/octet-stream" });
     fs.createReadStream(file).pipe(res);
   })
-  .listen(PORT, () => console.log(`http://localhost:${PORT}`));
+  .listen(PORT, "127.0.0.1", () => console.log(`http://localhost:${PORT}`)); // this machine only

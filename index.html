@@ -12,10 +12,10 @@
 <body>
   <main>
     <div class="progress" id="progress"></div>
-    <p class="question" id="question"></p>
-    <textarea id="answer"></textarea>
+    <h1 class="question" id="question"></h1>
+    <textarea id="answer" aria-labelledby="question"></textarea>
     <div class="review" id="review" hidden></div>
-    <p class="nudge" id="nudge" hidden>You haven't answered anything yet, so we can't tell which tools fit. Press Find my tools again to continue anyway.</p>
+    <p class="nudge" id="nudge" role="status" hidden>You haven't answered anything yet, so we can't tell which tools fit. Press Find my tools again to continue anyway.</p>
     <div class="buttons">
       <button id="back">Back</button>
       <button id="next">Next</button>
@@ -25,8 +25,10 @@
   <script src="questions.js"></script>
   <script>
     // Restore saved answers so "Edit" from the results page keeps them.
-    const saved = JSON.parse(localStorage.getItem("responses") || "[]");
-    const answers = QUESTIONS.map((_, i) => (saved[i] && saved[i].answer) || "");
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem("responses")) || []; } catch {} // unreadable data: start fresh
+    const answers = QUESTIONS.map((_, i) => (saved[i] && typeof saved[i].answer === "string" ? saved[i].answer : ""));
+    const MAX_CHARS = 1000; // matches the server's limit
     const REVIEW = QUESTIONS.length; // the step after the last question
     let current = location.hash === "#review" ? REVIEW : 0;
     history.replaceState(null, "", location.pathname); // drop #review so a reload starts fresh
@@ -53,6 +55,7 @@
         const field = document.createElement("textarea");
         field.value = answers[i];
         field.placeholder = q.example;
+        field.maxLength = MAX_CHARS;
         field.addEventListener("input", () => {
           answers[i] = field.value;
           persist();
@@ -64,7 +67,12 @@
 
     function render() {
       const onReview = current === REVIEW;
-      progressEl.textContent = onReview ? "" : `${current + 1}/${QUESTIONS.length}`;
+      // Shows "1/3"; screen readers hear "Question 1 of 3".
+      const shown = Object.assign(document.createElement("span"), { textContent: `${current + 1}/${QUESTIONS.length}` });
+      shown.setAttribute("aria-hidden", "true");
+      const spoken = Object.assign(document.createElement("span"), { className: "sr-only", textContent: `Question ${current + 1} of ${QUESTIONS.length}` });
+      if (onReview) progressEl.replaceChildren();
+      else progressEl.replaceChildren(shown, spoken);
       questionEl.textContent = onReview ? "Does this look right?" : QUESTIONS[current].text;
       answerEl.hidden = onReview;
       reviewEl.hidden = !onReview;
@@ -74,6 +82,7 @@
       nextBtn.textContent = onReview ? "Find my tools" : "Next";
       if (onReview) {
         renderReview();
+        reviewEl.querySelector("textarea").focus(); // keep keyboard and screen-reader users in place
       } else {
         answerEl.placeholder = QUESTIONS[current].example;
         answerEl.value = answers[current];
@@ -109,10 +118,12 @@
       render();
     }
 
+    answerEl.maxLength = MAX_CHARS;
     nextBtn.addEventListener("click", next);
     backBtn.addEventListener("click", back);
     answerEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+      // isComposing: Enter that confirms a Chinese/Japanese/Korean input word must not submit.
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
         e.preventDefault();
         next();
       }

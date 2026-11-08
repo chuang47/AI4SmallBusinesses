@@ -19,6 +19,7 @@ const hits = new Map();
 
 function rateLimited(ip) {
   const now = Date.now();
+  if (hits.size > 10000) hits.clear(); // keep memory bounded; worst case a few extra requests get through
   const recent = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
   recent.push(now);
   hits.set(ip, recent);
@@ -118,10 +119,9 @@ async function buildProfile(responses) {
 function cleanResponses(body) {
   const list = body && Array.isArray(body.responses) ? body.responses.slice(0, MAX_RESPONSES) : null;
   if (!list) return null;
-  return list.map((r) => ({
-    question: String((r && r.question) || "").slice(0, MAX_ANSWER_CHARS),
-    answer: String((r && r.answer) || "").slice(0, MAX_ANSWER_CHARS),
-  }));
+  // Only plain strings count; anything else becomes "" so junk can't trigger a paid model call.
+  const text = (v) => (typeof v === "string" ? v.slice(0, MAX_ANSWER_CHARS) : "");
+  return list.map((r) => ({ question: text(r && r.question), answer: text(r && r.answer) }));
 }
 
 module.exports = async function handler(req, res) {
@@ -141,3 +141,6 @@ module.exports = async function handler(req, res) {
   const recommendations = rank(profile, { tools, categories, problems });
   return res.status(200).json({ profile, profile_source: source, recommendations });
 };
+
+// Exposed for tests only.
+Object.assign(module.exports, { keywordProfile, validateProfile, cleanResponses });
