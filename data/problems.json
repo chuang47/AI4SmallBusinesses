@@ -1,0 +1,26 @@
+[
+  {
+    "id": "scheduling",
+    "label": "Covering shifts and managing staff hours",
+    "source": "NFIB Small Business Economic Trends, Sept 2026: labor quality and availability is the single most important problem for 26% of owners",
+    "categories": ["scheduling"]
+  },
+  {
+    "id": "hiring",
+    "label": "Finding and hiring good staff",
+    "source": "NFIB Small Business Economic Trends, Sept 2026: labor quality and availability is the single most important problem for 26% of owners",
+    "categories": ["hiring"]
+  },
+  {
+    "id": "costs_waste",
+    "label": "Rising costs and waste",
+    "source": "NFIB Small Business Economic Trends, Sept 2026: inflation and costs is the single most important problem for 20% of owners",
+    "categories": ["inventory_waste"]
+  },
+  {
+    "id": "poor_sales",
+    "label": "Not enough sales or customers",
+    "source": "NFIB Small Business Economic Trends, Sept 2026: poor sales is the single most important problem for 11% of owners",
+    "categories": ["marketing"]
+  }
+]
