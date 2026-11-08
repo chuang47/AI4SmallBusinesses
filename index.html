@@ -14,6 +14,8 @@
     <div class="progress" id="progress"></div>
     <p class="question" id="question"></p>
     <textarea id="answer"></textarea>
+    <div class="review" id="review" hidden></div>
+    <p class="nudge" id="nudge" hidden>You haven't answered anything yet, so we can't tell which tools fit. Press Find my tools again to continue anyway.</p>
     <div class="buttons">
       <button id="back">Back</button>
       <button id="next">Next</button>
@@ -22,40 +24,87 @@
 
   <script src="questions.js"></script>
   <script>
-    const answers = new Array(QUESTIONS.length).fill("");
-    let current = 0;
+    // Restore saved answers so "Edit" from the results page keeps them.
+    const saved = JSON.parse(localStorage.getItem("responses") || "[]");
+    const answers = QUESTIONS.map((_, i) => (saved[i] && saved[i].answer) || "");
+    const REVIEW = QUESTIONS.length; // the step after the last question
+    let current = location.hash === "#review" ? REVIEW : 0;
+    history.replaceState(null, "", location.pathname); // drop #review so a reload starts fresh
+    let nudged = false;
 
     const progressEl = document.getElementById("progress");
     const questionEl = document.getElementById("question");
     const answerEl = document.getElementById("answer");
+    const reviewEl = document.getElementById("review");
+    const nudgeEl = document.getElementById("nudge");
     const backBtn = document.getElementById("back");
     const nextBtn = document.getElementById("next");
 
-    function render() {
-      const isLast = current === QUESTIONS.length - 1;
-      progressEl.textContent = `${current + 1}/${QUESTIONS.length}`;
-      questionEl.textContent = QUESTIONS[current].text;
-      answerEl.placeholder = QUESTIONS[current].example;
-      answerEl.value = answers[current];
-      backBtn.style.visibility = current === 0 ? "hidden" : "visible";
-      nextBtn.textContent = isLast ? "Submit" : "Next";
-      answerEl.focus();
+    function persist() {
+      const responses = QUESTIONS.map((q, i) => ({ question: q.text, answer: answers[i] }));
+      localStorage.setItem("responses", JSON.stringify(responses));
     }
 
-    function next() {
-      answers[current] = answerEl.value;
-      if (current < QUESTIONS.length - 1) {
-        current++;
-        render();
+    function renderReview() {
+      reviewEl.innerHTML = "";
+      QUESTIONS.forEach((q, i) => {
+        const label = document.createElement("label");
+        label.textContent = q.text;
+        const field = document.createElement("textarea");
+        field.value = answers[i];
+        field.placeholder = q.example;
+        field.addEventListener("input", () => {
+          answers[i] = field.value;
+          persist();
+        });
+        label.append(field);
+        reviewEl.append(label);
+      });
+    }
+
+    function render() {
+      const onReview = current === REVIEW;
+      progressEl.textContent = onReview ? "" : `${current + 1}/${QUESTIONS.length}`;
+      questionEl.textContent = onReview ? "Does this look right?" : QUESTIONS[current].text;
+      answerEl.hidden = onReview;
+      reviewEl.hidden = !onReview;
+      nudgeEl.hidden = true;
+      nudged = false;
+      backBtn.style.visibility = current === 0 ? "hidden" : "visible";
+      nextBtn.textContent = onReview ? "Find my tools" : "Next";
+      if (onReview) {
+        renderReview();
       } else {
-        const responses = QUESTIONS.map((q, i) => ({ question: q.text, answer: answers[i] }));
-        localStorage.setItem("responses", JSON.stringify(responses));
-        window.location.href = "results.html";
+        answerEl.placeholder = QUESTIONS[current].example;
+        answerEl.value = answers[current];
+        answerEl.focus();
       }
     }
 
+    function saveCurrent() {
+      if (current < REVIEW) answers[current] = answerEl.value;
+      persist();
+    }
+
+    function findTools() {
+      if (answers.every((a) => !a.trim()) && !nudged) {
+        nudged = true;
+        nudgeEl.hidden = false;
+        return;
+      }
+      localStorage.removeItem("results"); // force a fresh request on the results page
+      window.location.href = "results.html";
+    }
+
+    function next() {
+      saveCurrent();
+      if (current === REVIEW) return findTools();
+      current++;
+      render();
+    }
+
     function back() {
-      answers[current] = answerEl.value;
+      saveCurrent();
       current--;
       render();
     }

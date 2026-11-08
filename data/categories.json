@@ -1,0 +1,37 @@
+{
+  "scheduling": {
+    "label": "Scheduling",
+    "table_stakes": {
+      "shift_schedule_builder": "Build and publish shift schedules",
+      "time_off_requests": "Staff can request time off",
+      "shift_swap_approval": "Staff can swap shifts with manager approval",
+      "staff_mobile_app": "Mobile app for staff"
+    }
+  },
+  "hiring": {
+    "label": "Finding candidates",
+    "table_stakes": {
+      "job_post_creation": "Create and publish job posts",
+      "applicant_tracking": "Track applicants through stages",
+      "candidate_messaging": "Message candidates in the tool",
+      "mobile_apply": "Candidates can apply from a phone"
+    }
+  },
+  "inventory_waste": {
+    "label": "Inventory and waste",
+    "table_stakes": {
+      "stock_count_tracking": "Track stock levels",
+      "low_stock_alerts": "Low-stock alerts",
+      "supplier_ordering": "Create and send supplier orders",
+      "item_cost_tracking": "Track ingredient or item costs"
+    }
+  },
+  "marketing": {
+    "label": "Marketing",
+    "table_stakes": {
+      "social_post_scheduling": "Schedule social media posts",
+      "email_campaigns": "Send email campaigns",
+      "template_library": "Ready-made templates"
+    }
+  }
+}

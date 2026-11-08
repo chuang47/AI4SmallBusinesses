@@ -1,0 +1,96 @@
+{
+  "profile": {
+    "business_type": "coffee shop",
+    "problems": [
+      "scheduling",
+      "costs_waste"
+    ],
+    "budget": 100
+  },
+  "recommendations": [
+    {
+      "name": "Mock Scheduler A",
+      "category": "scheduling",
+      "price_monthly": 35,
+      "summary": "MOCK DATA: simple scheduling for cafes with part-time hourly staff",
+      "match": 4.5,
+      "feature_coverage": "4/4",
+      "features": {
+        "shift_schedule_builder": true,
+        "time_off_requests": true,
+        "shift_swap_approval": true,
+        "staff_mobile_app": true
+      },
+      "reasons": [
+        "Helps with: covering shifts and managing staff hours",
+        "Covers 4 of 4 features on our Scheduling checklist",
+        "Within your $100/month budget"
+      ],
+      "source_url": "https://example.com/mock-scheduler-a",
+      "last_verified": "2026-11-08"
+    },
+    {
+      "name": "Mock Inventory A",
+      "category": "inventory_waste",
+      "price_monthly": 50,
+      "summary": "MOCK DATA: stock counts and supplier orders for a single cafe",
+      "match": 4.5,
+      "feature_coverage": "4/4",
+      "features": {
+        "stock_count_tracking": true,
+        "low_stock_alerts": true,
+        "supplier_ordering": true,
+        "item_cost_tracking": true
+      },
+      "reasons": [
+        "Helps with: rising costs and waste",
+        "Covers 4 of 4 features on our Inventory and waste checklist",
+        "Within your $100/month budget"
+      ],
+      "source_url": "https://example.com/mock-inventory-a",
+      "last_verified": "2026-11-08"
+    },
+    {
+      "name": "Mock Scheduler B",
+      "category": "scheduling",
+      "price_monthly": 80,
+      "summary": "MOCK DATA: complete scheduling, priced higher",
+      "match": 4.5,
+      "feature_coverage": "4/4",
+      "features": {
+        "shift_schedule_builder": true,
+        "time_off_requests": true,
+        "shift_swap_approval": true,
+        "staff_mobile_app": true
+      },
+      "reasons": [
+        "Helps with: covering shifts and managing staff hours",
+        "Covers 4 of 4 features on our Scheduling checklist",
+        "Within your $100/month budget"
+      ],
+      "source_url": "https://example.com/mock-scheduler-b",
+      "last_verified": "2026-11-08"
+    },
+    {
+      "name": "Mock Inventory C",
+      "category": "inventory_waste",
+      "price_monthly": 20,
+      "summary": "MOCK DATA: budget stock tracker without supplier ordering",
+      "match": 4,
+      "feature_coverage": "3/4",
+      "features": {
+        "stock_count_tracking": true,
+        "low_stock_alerts": true,
+        "supplier_ordering": false,
+        "item_cost_tracking": true
+      },
+      "reasons": [
+        "Helps with: rising costs and waste",
+        "Covers 3 of 4 features on our Inventory and waste checklist",
+        "Within your $100/month budget"
+      ],
+      "source_url": "https://example.com/mock-inventory-c",
+      "last_verified": "2026-11-08"
+    }
+  ]
+}

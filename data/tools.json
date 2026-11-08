@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Mock Scheduler A",
+    "category": "scheduling",
+    "price_monthly": 35,
+    "features": {
+      "shift_schedule_builder": true,
+      "time_off_requests": true,
+      "shift_swap_approval": true,
+      "staff_mobile_app": true
+    },
+    "summary": "MOCK DATA: simple scheduling for cafes with part-time hourly staff",
+    "last_verified": "2026-11-08",
+    "source_url": "https://example.com/mock-scheduler-a"
+  },
+  {
+    "name": "Mock Scheduler B",
+    "category": "scheduling",
+    "price_monthly": 80,
+    "features": {
+      "shift_schedule_builder": true,
+      "time_off_requests": true,
+      "shift_swap_approval": true,
+      "staff_mobile_app": true
+    },
+    "summary": "MOCK DATA: complete scheduling, priced higher",
+    "last_verified": "2026-11-08",
+    "source_url": "https://example.com/mock-scheduler-b"
+  },
+  {
+    "name": "Mock Scheduler C",
+    "category": "scheduling",
+    "price_monthly": null,
+    "features": {
+      "shift_schedule_builder": true,
+      "time_off_requests": true,
+      "shift_swap_approval": false,
+      "staff_mobile_app": true
+    },
+    "summary": "MOCK DATA: scheduler with pricing by quote only",
+    "last_verified": "2026-11-08",
+    "source_url": "https://example.com/mock-scheduler-c"
+  },
+  {
+    "name": "Mock Inventory A",
+    "category": "inventory_waste",
+    "price_monthly": 50,
+    "features": {
+      "stock_count_tracking": true,
+      "low_stock_alerts": true,
+      "supplier_ordering": true,
+      "item_cost_tracking": true
+    },
+    "summary": "MOCK DATA: stock counts and supplier orders for a single cafe",
+    "last_verified": "2026-11-08",
+    "source_url": "https://example.com/mock-inventory-a"
+  },
+  {
+    "name": "Mock Inventory B",
+    "category": "inventory_waste",
+    "price_monthly": 150,
+    "features": {
+      "stock_count_tracking": true,
+      "low_stock_alerts": true,
+      "supplier_ordering": true,
+      "item_cost_tracking": true
+    },
+    "summary": "MOCK DATA: everything included, priced for larger shops",
+    "last_verified": "2026-11-08",
+    "source_url": "https://example.com/mock-inventory-b"
+  },
+  {
+    "name": "Mock Inventory C",
+    "category": "inventory_waste",
+    "price_monthly": 20,
+    "features": {
+      "stock_count_tracking": true,
+      "low_stock_alerts": true,
+      "supplier_ordering": false,
+      "item_cost_tracking": true
+    },
+    "summary": "MOCK DATA: budget stock tracker without supplier ordering",
+    "last_verified": "2026-11-08",
+    "source_url": "https://example.com/mock-inventory-c"
+  }
+]
