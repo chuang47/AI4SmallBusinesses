@@ -73,9 +73,9 @@ test("ties: lower price, then priced before unpublished, then name", () => {
   assert.deepStrictEqual(run({ problems: ["staff"], budget: null }, tools).map((r) => r.name), ["Cheap", "Alpha", "Zeta", "Unpriced"]);
 });
 
-test("returns at most 4, without internal fields", () => {
-  const tools = ["A", "B", "C", "D", "E"].map((n) => tool(n, "staff", 10, all));
+test("returns at most 12, without internal fields", () => {
+  const tools = Array.from({ length: 15 }, (_, i) => tool(`T${i}`, "staff", 10, all));
   const recs = run({ problems: ["staff"], budget: 50 }, tools);
-  assert.strictEqual(recs.length, 4);
+  assert.strictEqual(recs.length, 12);
   assert.ok(!("score" in recs[0]) && !("_coverage" in recs[0]));
 });

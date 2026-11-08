@@ -95,6 +95,49 @@
       ],
       "source_url": "https://example.com/mock-inventory-c",
       "last_verified": "2026-11-08"
+    },
+    {
+      "name": "Mock Inventory B",
+      "category": "daily_operations",
+      "price_monthly": 150,
+      "custom_pricing": false,
+      "price_note": "Per location, billed yearly",
+      "summary": "MOCK DATA: AI demand forecasts for ordering",
+      "match": 3.5,
+      "feature_coverage": "3/4",
+      "features": {
+        "free_trial": true,
+        "month_to_month": false,
+        "mobile_app": true,
+        "works_with_common_tools": true
+      },
+      "reasons": [
+        "Passes 3 of 4 small-business checks",
+        "$50 over your $100/month budget"
+      ],
+      "source_url": "https://example.com/mock-inventory-b",
+      "last_verified": "2026-11-08"
+    },
+    {
+      "name": "Mock Scheduler C",
+      "category": "staff_hiring",
+      "price_monthly": null,
+      "custom_pricing": true,
+      "price_note": "",
+      "summary": "MOCK DATA: AI-first scheduler sold through a sales call",
+      "match": 2.5,
+      "feature_coverage": "2/4",
+      "features": {
+        "free_trial": false,
+        "month_to_month": false,
+        "mobile_app": true,
+        "works_with_common_tools": true
+      },
+      "reasons": [
+        "Passes 2 of 4 small-business checks"
+      ],
+      "source_url": "https://example.com/mock-scheduler-c",
+      "last_verified": "2026-11-08"
     }
   ]
 }
