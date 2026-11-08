@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Questionnaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <div class="progress" id="progress"></div>
+    <p class="question" id="question"></p>
+    <textarea id="answer"></textarea>
+    <div class="buttons">
+      <button id="back">Back</button>
+      <button id="next">Next</button>
+    </div>
+  </main>
+
+  <script src="questions.js"></script>
+  <script>
+    const answers = new Array(QUESTIONS.length).fill("");
+    let current = 0;
+
+    const progressEl = document.getElementById("progress");
+    const questionEl = document.getElementById("question");
+    const answerEl = document.getElementById("answer");
+    const backBtn = document.getElementById("back");
+    const nextBtn = document.getElementById("next");
+
+    function render() {
+      const isLast = current === QUESTIONS.length - 1;
+      progressEl.textContent = `${current + 1}/${QUESTIONS.length}`;
+      questionEl.textContent = QUESTIONS[current].text;
+      answerEl.placeholder = QUESTIONS[current].example;
+      answerEl.value = answers[current];
+      backBtn.style.visibility = current === 0 ? "hidden" : "visible";
+      nextBtn.textContent = isLast ? "Submit" : "Next";
+      answerEl.focus();
+    }
+
+    function next() {
+      answers[current] = answerEl.value;
+      if (current < QUESTIONS.length - 1) {
+        current++;
+        render();
+      } else {
+        const responses = QUESTIONS.map((q, i) => ({ question: q.text, answer: answers[i] }));
+        localStorage.setItem("responses", JSON.stringify(responses));
+        window.location.href = "results.html";
+      }
+    }
+
+    function back() {
+      answers[current] = answerEl.value;
+      current--;
+      render();
+    }
+
+    nextBtn.addEventListener("click", next);
+    backBtn.addEventListener("click", back);
+    answerEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        next();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

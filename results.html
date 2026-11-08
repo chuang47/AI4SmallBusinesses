@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Responses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <p class="question">Your responses</p>
+    <dl class="results" id="results"></dl>
+  </main>
+
+  <script>
+    const responses = JSON.parse(localStorage.getItem("responses") || "[]");
+    const list = document.getElementById("results");
+    for (const { question, answer } of responses) {
+      const dt = document.createElement("dt");
+      dt.textContent = question;
+      const dd = document.createElement("dd");
+      dd.textContent = answer || "—";
+      list.append(dt, dd);
+    }
+  </script>
+</body>
+</html>
