@@ -24,10 +24,18 @@
         <p class="label">Here's what we understood <a href="index.html#review" aria-label="Edit your answers">Edit</a></p>
         <dl id="understood"></dl>
       </section>
-      <p class="hint" id="hint">Select up to 3 tools to see your monthly total and compare them side by side.</p>
-      <p class="hint" id="shopNote"></p>
-      <div id="cards"></div>
-      <p class="picks" id="picks" role="status" hidden></p>
+
+      <!-- Stays at the top of the screen: what they've picked and the monthly total. -->
+      <div class="picks" id="picks" role="status"></div>
+
+      <p class="status" id="empty" hidden></p>
+
+      <!-- Left: scrollable list. Right: details of the chosen tool. -->
+      <div class="browse" id="browse">
+        <ul class="tool-list" id="list" aria-label="Recommended tools"></ul>
+        <section class="detail" id="detail" aria-live="polite"></section>
+      </div>
+
       <section id="compare" hidden aria-labelledby="compareTitle">
         <h2 class="label" id="compareTitle">Compare</h2>
         <div class="table-wrap"><table id="compareTable"><caption class="sr-only">Side-by-side comparison of the tools you selected</caption></table></div>
@@ -37,7 +45,7 @@
 
   <script>
     const TIMEOUT_MS = 10000;
-    const MAX_COMPARE = 3;
+    const MAX_PICKS = 3;
     const useSample = new URLSearchParams(location.search).has("sample");
     let responses = [];
     try { responses = JSON.parse(localStorage.getItem("responses")) || []; } catch {}
@@ -46,7 +54,8 @@
     const neverAnswered = !useSample && (!Array.isArray(responses) || responses.length === 0);
     if (neverAnswered) location.replace("index.html");
     const $ = (id) => document.getElementById(id);
-    let categories, checks, data;
+    let categories, checks, config, data;
+    let current = null; // name of the tool shown on the right
     const selected = new Set();
 
     function el(tag, props = {}, ...children) {
@@ -58,6 +67,16 @@
     const price = (t) =>
       t.price_monthly != null ? `${money(t.price_monthly)}/month` : t.custom_pricing ? "Contact sales for pricing" : "Price not published";
     const labelOf = (id) => (categories.find((c) => c.id === id) || {}).label || id;
+    const tag = (rec) => el("span", { className: "tag", textContent: labelOf(rec.category) });
+    // "4.5/5" on screen; screen readers hear "Match 4.5 out of 5".
+    const matchBadge = (rec) => el("span", { className: "match" },
+      el("span", { textContent: `${rec.match}/5`, ariaHidden: "true" }),
+      el("span", { className: "sr-only", textContent: `Match ${rec.match} out of 5` }));
+    // ✓ / – on screen; "Yes" / "No" for screen readers.
+    const mark = (yes) => [
+      el("span", { textContent: yes ? "✓" : "–", ariaHidden: "true" }),
+      el("span", { className: "sr-only", textContent: yes ? "Yes" : "No" }),
+    ];
 
     function show(which) {
       for (const id of ["loading", "error", "content"]) $(id).hidden = id !== which;
@@ -72,10 +91,8 @@
     async function load() {
       show("loading");
       try {
-        let config;
         [categories, checks, config] = await Promise.all(
           ["categories", "checks", "config"].map((f) => getJson(`data/${f}.json`)));
-        $("shopNote").textContent = `Prices are for a business with ${config.reference_shop}.`;
         const key = JSON.stringify(responses);
         let cached = null;
         try { cached = JSON.parse(localStorage.getItem("results")); } catch {}
@@ -118,78 +135,105 @@
         el("dt", { textContent: "Budget" }), el("dd", { textContent: profile.budget == null ? "No limit given" : `$${profile.budget}/month` }),
       );
 
-      if (recommendations.length === 0) {
-        $("hint").hidden = true;
-        $("shopNote").hidden = true;
+      const none = recommendations.length === 0;
+      $("browse").hidden = none;
+      $("picks").hidden = none;
+      $("empty").hidden = !none;
+      if (none) {
         $("compare").hidden = true;
         const covered = categories.map((c) => c.label.toLowerCase()).join(", ");
         // Understood the problem but have no tools for it, vs. didn't recognise a problem at all.
-        const message = problemLabels.length
+        $("empty").textContent = problemLabels.length
           ? `We understood your challenge (${problemLabels.join(", ").toLowerCase()}), but we don't have tools for it in our catalog yet.`
           : `We couldn't match your answers to a problem we cover yet (${covered}). Try editing your answers to say more about your biggest challenge.`;
-        $("cards").replaceChildren(el("p", { className: "status", textContent: message }));
         return;
       }
-      $("hint").hidden = recommendations.length < 2;
-      $("shopNote").hidden = false;
-      $("cards").replaceChildren(...recommendations.map(card));
+      if (!recommendations.some((r) => r.name === current)) current = recommendations[0].name;
+      update();
+    }
+
+    // Redraw everything that depends on which tool is open and which are selected.
+    function update() {
+      renderList();
+      renderDetail();
+      renderPicks();
       renderCompare();
     }
 
-    function card(rec) {
-      const box = el("input", { type: "checkbox", checked: selected.has(rec.name) });
-      box.setAttribute("aria-label", `Select ${rec.name}`);
-      box.addEventListener("change", () => {
-        box.checked ? selected.add(rec.name) : selected.delete(rec.name);
-        renderCompare();
+    function renderList() {
+      $("list").replaceChildren(...data.recommendations.map((rec) => {
+        const isPicked = selected.has(rec.name);
+        const row = el("button", { className: "tool-row" + (rec.name === current ? " active" : "") },
+          el("span", { className: "row-top" }, tag(rec), isPicked ? el("span", { className: "picked", textContent: "✓ Selected" }) : ""),
+          el("span", { className: "row-head" }, el("span", { className: "row-name", textContent: rec.name }), matchBadge(rec)),
+          el("span", { className: "row-price", textContent: price(rec) }));
+        row.setAttribute("aria-current", rec.name === current ? "true" : "false");
+        row.addEventListener("click", () => {
+          current = rec.name;
+          update();
+          // On phones the details sit below the list, so bring them into view.
+          if (matchMedia("(max-width: 760px)").matches) $("detail").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        return el("li", {}, row);
+      }));
+    }
+
+    function renderDetail() {
+      const rec = data.recommendations.find((r) => r.name === current);
+      const isPicked = selected.has(rec.name);
+      const full = !isPicked && selected.size >= MAX_PICKS;
+      const pick = el("button", { className: "pick-btn" + (isPicked ? " on" : ""), disabled: full,
+        textContent: isPicked ? "✓ Selected (remove)" : full ? `You can select up to ${MAX_PICKS}` : "Add to my selection" });
+      pick.addEventListener("click", () => {
+        isPicked ? selected.delete(rec.name) : selected.add(rec.name);
+        update();
       });
-      return el("article", { className: "card" },
-        el("div", { className: "tags" },
-          el("span", { className: "sr-only", textContent: "Helps with: " }),
-          el("span", { className: "tag", textContent: labelOf(rec.category) })),
-        el("div", { className: "card-head" },
-          el("h2", { textContent: rec.name }),
-          el("span", { className: "match" },
-            el("span", { textContent: `${rec.match}/5`, ariaHidden: "true" }),
-            el("span", { className: "sr-only", textContent: `Match ${rec.match} out of 5` }))),
-        el("p", { className: "meta", textContent: [price(rec), rec.price_note].filter(Boolean).join(" · ") }),
-        el("p", { textContent: rec.summary }),
+
+      $("detail").replaceChildren(
+        el("div", { className: "tags" }, el("span", { className: "sr-only", textContent: "Helps with: " }), tag(rec)),
+        el("div", { className: "detail-head" }, el("h2", { textContent: rec.name }), matchBadge(rec)),
+        el("p", { className: "detail-price", textContent: price(rec) }),
+        rec.price_note ? el("p", { className: "meta", textContent: rec.price_note }) : "",
+        el("p", { className: "meta", textContent: `Estimated for a business with about ${config.reference_shop.replace("employees", "staff")}. Tools that charge per person or per location may cost you more or less.` }),
+        el("p", { className: "summary", textContent: rec.summary }),
+        el("h3", { className: "label", textContent: "Why it fits" }),
         el("ul", { className: "reasons" }, ...rec.reasons.map((r) => el("li", { textContent: r }))),
-        el("div", { className: "card-foot" },
-          el("label", {}, box, " Select"),
-          el("a", { href: rec.source_url, target: "_blank", rel: "noopener", textContent: "Source", ariaLabel: `${rec.name} pricing source (opens in a new tab)` })),
+        el("h3", { className: "label", textContent: "Small-business checks" }),
+        el("ul", { className: "checks" }, ...Object.entries(checks).map(([key, desc]) =>
+          el("li", { className: rec.features[key] ? "yes" : "no" }, el("span", { className: "mark" }, ...mark(rec.features[key])), " ", desc))),
+        el("div", { className: "detail-actions" },
+          pick,
+          el("a", { href: rec.source_url, target: "_blank", rel: "noopener", textContent: "View pricing source", ariaLabel: `${rec.name} pricing source (opens in a new tab)` })),
+        el("p", { className: "meta", textContent: `Last verified ${rec.last_verified}` }),
+      );
+    }
+
+    // Running total of the tools they picked. Unpublished prices are named, never guessed.
+    function renderPicks() {
+      const tools = data.recommendations.filter((r) => selected.has(r.name));
+      if (!tools.length) {
+        $("picks").replaceChildren(el("span", { className: "picks-empty", textContent: `Selected tools: none yet. Add up to ${MAX_PICKS} to see your monthly total and compare them.` }));
+        return;
+      }
+      const priced = tools.filter((t) => t.price_monthly != null);
+      const total = priced.reduce((sum, t) => sum + t.price_monthly, 0);
+      const unpriced = tools.length - priced.length;
+      const amount = priced.length ? `${money(total)}/month` : "";
+      const extra = unpriced ? `${unpriced} without a listed price` : "";
+      $("picks").replaceChildren(
+        el("span", { textContent: `Selected tools: ${tools.map((t) => t.name).join(" + ")} = ` }),
+        el("strong", { textContent: [amount, extra].filter(Boolean).join(" + ") }),
+        tools.length >= 2 ? el("a", { href: "#compare", className: "picks-link", textContent: "Compare" }) : "",
       );
     }
 
     function renderCompare() {
-      // Lock the remaining checkboxes once the max is reached.
-      $("cards").querySelectorAll("input[type=checkbox]").forEach((b) => {
-        b.disabled = !b.checked && selected.size >= MAX_COMPARE;
-      });
       const tools = data.recommendations.filter((r) => selected.has(r.name));
-
-      // Running total of the tools they picked. Unpublished prices are named, never guessed.
-      $("picks").hidden = tools.length === 0;
-      if (tools.length) {
-        const priced = tools.filter((t) => t.price_monthly != null);
-        const total = priced.reduce((sum, t) => sum + t.price_monthly, 0);
-        const unpriced = tools.length - priced.length;
-        const amount = priced.length ? `${money(total)}/month` : "";
-        const extra = unpriced ? `${unpriced} without a listed price` : "";
-        $("picks").textContent = `Your picks: ${tools.map((t) => t.name).join(" + ")} = ${[amount, extra].filter(Boolean).join(" + ")}`;
-      }
-
       $("compare").hidden = tools.length < 2;
       if (tools.length < 2) return;
 
       const row = (label, cells) =>
         el("tr", {}, el("th", { scope: "row", textContent: label }), ...cells.map((c) => el("td", {}, ...[].concat(c))));
-      // ✓ / – on screen; "Yes" / "No" for screen readers.
-      const mark = (yes) => [
-        el("span", { textContent: yes ? "✓" : "–", ariaHidden: "true" }),
-        el("span", { className: "sr-only", textContent: yes ? "Yes" : "No" }),
-      ];
-
       const names = el("tr", { className: "names" },
         el("td"), ...tools.map((t) => el("th", { scope: "col", textContent: t.name })));
       const rows = [
