@@ -216,6 +216,9 @@ a {
 }
 
 .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   color: #444;
   background: #f1f1f1;
@@ -223,12 +226,20 @@ a {
   padding: 2px 10px;
 }
 
-/* One pastel per category, with dark text in the same hue (all pass contrast). */
-.tag-staff_hiring { color: #1f3f6e; background: #dde9fb; }        /* blue: people */
-.tag-money_bookkeeping { color: #1e5233; background: #dcf2e3; }   /* green: money */
-.tag-marketing_customers { color: #7a2638; background: #fde1e6; } /* pink: customers */
-.tag-daily_operations { color: #6a4b0b; background: #fcefcf; }    /* yellow: day-to-day work */
-.tag-legal_paperwork { color: #4a2f7a; background: #ebe3fb; }     /* lavender: paperwork */
+/* A small shape before each category label (decorative, so screen readers skip it). */
+.tag::before {
+  content: "";
+  flex: none;
+  width: 9px;
+  height: 9px;
+  background: #444;
+}
+
+.tag-money_bookkeeping::before { border-radius: 50%; }                                          /* ● coin */
+.tag-staff_hiring::before { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }            /* ◆ */
+.tag-marketing_customers::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }             /* ▲ growth */
+.tag-daily_operations::before { clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); } /* ⬢ nut */
+.tag-legal_paperwork::before { border-radius: 1px; }                                            /* ■ page */
 
 /* Your selection, styled like a receipt: line items, dashed rule, total. */
 .receipt {
@@ -584,6 +595,13 @@ a {
 .match {
   font-size: 20px;
   white-space: nowrap;
+}
+
+/* Scores of 3+ get a soft yellow-to-green pill (colour set in results.html). */
+.match.scored {
+  padding: 1px 10px;
+  color: #111;
+  border-radius: 999px;
 }
 
 .meta {

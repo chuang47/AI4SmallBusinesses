@@ -137,9 +137,18 @@
     // Each category gets its own pastel colour (see .tag-* in style.css).
     const tag = (rec) => el("span", { className: `tag tag-${rec.category}`, textContent: labelOf(rec.category) });
     // "4.5/5" on screen; screen readers hear "Match 4.5 out of 5".
-    const matchBadge = (rec) => el("span", { className: "match" },
-      el("span", { textContent: `${rec.match}/5`, ariaHidden: "true" }),
-      el("span", { className: "sr-only", textContent: `Match ${rec.match} out of 5` }));
+    const matchBadge = (rec) => {
+      const badge = el("span", { className: "match" },
+        el("span", { textContent: `${rec.match}/5`, ariaHidden: "true" }),
+        el("span", { className: "sr-only", textContent: `Match ${rec.match} out of 5` }));
+      // 3/5 = yellow, blending to green at 5/5. Below 3: no colour (not red; low often just means over budget).
+      if (rec.match >= 3) {
+        const hue = 48 + (rec.match - 3) / 2 * (130 - 48);
+        badge.classList.add("scored");
+        badge.style.background = `hsl(${hue}, 65%, 86%)`;
+      }
+      return badge;
+    };
     // ✓ / – on screen; "Yes" / "No" for screen readers.
     const mark = (yes) => [
       el("span", { textContent: yes ? "✓" : "–", ariaHidden: "true" }),
