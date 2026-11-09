@@ -1,274 +1,258 @@
 [
   {
-    "name": "Mock Scheduler A",
-    "category": "staff_hiring",
-    "price_monthly": 35,
-    "custom_pricing": false,
-    "price_note": "",
-    "summary": "MOCK DATA: drafts weekly shift schedules for hourly staff",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": true,
-      "works_with_common_tools": false
-    },
-    "source_url": "https://example.com/mock-scheduler-a",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Scheduler B",
-    "category": "staff_hiring",
-    "price_monthly": 80,
-    "custom_pricing": false,
-    "price_note": "Billed monthly",
-    "summary": "MOCK DATA: scheduling plus AI forecasts of how many staff you need",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-scheduler-b",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Scheduler C",
-    "category": "staff_hiring",
-    "price_monthly": null,
-    "custom_pricing": true,
-    "price_note": "",
-    "summary": "MOCK DATA: AI-first scheduler sold through a sales call",
-    "features": {
-      "free_trial": false,
-      "month_to_month": false,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-scheduler-c",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Inventory A",
-    "category": "daily_operations",
-    "price_monthly": 50,
-    "custom_pricing": false,
-    "price_note": "",
-    "summary": "MOCK DATA: tracks supplies and suggests what to reorder",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-inventory-a",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Inventory B",
-    "category": "daily_operations",
-    "price_monthly": 150,
-    "custom_pricing": false,
-    "price_note": "Per location, billed yearly",
-    "summary": "MOCK DATA: AI demand forecasts for ordering",
-    "features": {
-      "free_trial": true,
-      "month_to_month": false,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-inventory-b",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Inventory C",
-    "category": "daily_operations",
-    "price_monthly": 20,
-    "custom_pricing": false,
-    "price_note": "",
-    "summary": "MOCK DATA: budget stock tracker that reads supplier invoices",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": false,
-      "works_with_common_tools": false
-    },
-    "source_url": "https://example.com/mock-inventory-c",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Books A",
-    "category": "money_bookkeeping",
-    "price_monthly": 27,
-    "custom_pricing": false,
-    "price_note": "Intro offer: $16.20/mo for 3 months",
-    "summary": "MOCK DATA: sorts transactions and flags tax deductions",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-books-a",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Marketer A",
+    "name": "Apollo.io",
     "category": "marketing_customers",
     "price_monthly": 0,
     "custom_pricing": false,
-    "price_note": "Free plan; paid plans from $29",
-    "summary": "MOCK DATA: writes social posts and replies to reviews",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": true,
-      "works_with_common_tools": false
-    },
-    "source_url": "https://example.com/mock-marketer-a",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Books B",
-    "category": "money_bookkeeping",
-    "price_monthly": 45.99,
-    "custom_pricing": false,
-    "price_note": "Billed monthly",
-    "summary": "MOCK DATA: reads receipts from photos and prepares quarterly tax estimates",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-books-b",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Books C",
-    "category": "money_bookkeeping",
-    "price_monthly": null,
-    "custom_pricing": false,
-    "price_note": "",
-    "summary": "MOCK DATA: AI bookkeeper reconciles bank transactions every week",
-    "features": {
-      "free_trial": false,
-      "month_to_month": true,
-      "mobile_app": false,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-books-c",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Payroll A",
-    "category": "money_bookkeeping",
-    "price_monthly": 120,
-    "custom_pricing": false,
-    "price_note": "$40 base + $10 per employee",
-    "summary": "MOCK DATA: runs payroll and answers staff pay questions with an AI assistant",
-    "features": {
-      "free_trial": true,
-      "month_to_month": false,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-payroll-a",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Marketer B",
-    "category": "marketing_customers",
-    "price_monthly": 59,
-    "custom_pricing": false,
-    "price_note": "",
-    "summary": "MOCK DATA: drafts email campaigns and suggests the best time to send",
+    "price_note": "14 day free trial",
+    "summary": "Apollo.io is a B2B sales platform that combines a large contact database, email sequences, a dialer and AI writing help for finding and contacting leads. It syncs with CRMs like Salesforce and HubSpot, and runs outreach through your own Gmail or Outlook account. A permanent free plan exists, and a free Chrome extension lets you prospect from LinkedIn and Gmail. Reviewers complain about outdated contact data, especially mobile phone numbers, and about a busy interface.",
     "features": {
       "free_trial": true,
       "month_to_month": true,
       "mobile_app": false,
       "works_with_common_tools": true
     },
-    "source_url": "https://example.com/mock-marketer-b",
+    "source_url": "https://www.apollo.io/pricing",
     "last_verified": "2026-11-08"
   },
   {
-    "name": "Mock Receptionist A",
-    "category": "marketing_customers",
-    "price_monthly": 99,
-    "custom_pricing": false,
-    "price_note": "Includes 300 calls a month",
-    "summary": "MOCK DATA: AI voice answers calls and books appointments",
-    "features": {
-      "free_trial": true,
-      "month_to_month": true,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-receptionist-a",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Reviews A",
+    "name": "Bland AI",
     "category": "marketing_customers",
     "price_monthly": null,
     "custom_pricing": true,
-    "price_note": "",
-    "summary": "MOCK DATA: watches your online reviews and drafts replies",
-    "features": {
-      "free_trial": false,
-      "month_to_month": false,
-      "mobile_app": true,
-      "works_with_common_tools": true
-    },
-    "source_url": "https://example.com/mock-reviews-a",
-    "last_verified": "2026-11-08"
-  },
-  {
-    "name": "Mock Contracts A",
-    "category": "legal_paperwork",
-    "price_monthly": 25,
-    "custom_pricing": false,
-    "price_note": "",
-    "summary": "MOCK DATA: fills in common contracts and flags risky clauses",
+    "price_note": "free limited credits",
+    "summary": "Bland AI builds AI phone agents that make and answer real phone calls, with natural-sounding voices. Businesses use them for outbound sales calls, appointment reminders and inbound support. It supports large call batches and also handles SMS, WhatsApp and web chat with memory across channels. Reviewers like the flexibility, but call it developer-only with no visual builder for non-technical teams. They also warn that per-minute costs add up fast at high volume.",
     "features": {
       "free_trial": true,
       "month_to_month": true,
       "mobile_app": false,
-      "works_with_common_tools": false
+      "works_with_common_tools": true
     },
-    "source_url": "https://example.com/mock-contracts-a",
+    "source_url": "https://www.bland.ai/pricing",
     "last_verified": "2026-11-08"
   },
   {
-    "name": "Mock Forms A",
-    "category": "legal_paperwork",
+    "name": "Canva Magic Studio",
+    "category": "marketing_customers",
     "price_monthly": 0,
     "custom_pricing": false,
-    "price_note": "Free plan; paid plans from $15",
-    "summary": "MOCK DATA: writes waivers and policies from plain-language answers",
+    "price_note": "30 day free trial",
+    "summary": "Canva Magic Studio is the AI suite inside Canva’s design editor. Magic Write generates copy and captions, Magic Media creates images and videos from text, Magic Edit changes parts of photos, and Magic Switch resizes and translates designs. It suits small businesses making social posts, flyers, presentations and marketing materials without a designer.",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://www.canva.com/pricing/",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Casual",
+    "category": "daily_operations",
+    "price_monthly": 10,
+    "custom_pricing": false,
+    "price_note": "14 day free trial",
+    "summary": "Casual is a visual project management tool where you map out tasks and their dependencies as a flowchart instead of a list or board. It offers reusable project templates and process automation for property management, onboarding and project-based learning. It suits small teams planning projects, but reviewers say it lacks advanced resource management, time tracking and reporting.",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://casual.pm/pricing",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Zapier",
+    "category": "daily_operations",
+    "price_monthly": 0,
+    "custom_pricing": false,
+    "price_note": "14 day free trial",
+    "summary": "Zapier is a no-code automation platform that connects your apps so a trigger in one starts an action in another, such as logging a Square sale in QuickBooks. Its AI features include Zapier Copilot and AI tools such as AI troubleshooting and Formatter with AI, plus Zapier Agents and chatbots. It suits small businesses that want to automate repetitive work without writing code, but heavier use gets expensive because plans are limited by monthly task counts.",
     "features": {
       "free_trial": true,
       "month_to_month": true,
       "mobile_app": false,
       "works_with_common_tools": true
     },
-    "source_url": "https://example.com/mock-forms-a",
+    "source_url": "https://zapier.com/pricing",
     "last_verified": "2026-11-08"
   },
   {
-    "name": "Mock Compliance A",
-    "category": "legal_paperwork",
-    "price_monthly": 300,
+    "name": "Scribe",
+    "category": "daily_operations",
+    "price_monthly": 0,
     "custom_pricing": false,
-    "price_note": "Billed yearly",
-    "summary": "MOCK DATA: tracks permit and license renewal deadlines",
+    "price_note": "",
+    "summary": "Scribe automatically records how work gets done and turns it into step-by-step guides and process documentation. Its products are Capture, which creates documentation as people work, and Optimize, which uses AI to find and improve workflows. It also redacts sensitive data automatically. It suits small businesses writing how-to guides and standard procedures for new staff without writing them by hand.",
+    "features": {
+      "free_trial": false,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://scribe.com/pricing",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Tango",
+    "category": "daily_operations",
+    "price_monthly": 0,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "Tango turns a workflow into a step-by-step guide automatically. You click through a process, and Tango captures it with screenshots, highlights and descriptions, which you can share as a link, export to PDF or embed. Its AI features include voice transcription, Guide Me for walking users through each click, and automations. It suits small businesses writing training and onboarding guides.",
+    "features": {
+      "free_trial": false,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://www.tango.ai/pricing",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Lattice",
+    "category": "staff_hiring",
+    "price_monthly": 13,
+    "custom_pricing": false,
+    "price_note": "",
+    "summary": "Lattice is an HR platform for managing people and performance, including reviews, 1:1s, feedback, goals and OKRs, engagement surveys, compensation, career growth and analytics. Its AI features include an AI Agent that answers policy and career questions, AI-powered survey insights and an MCP offering. The homepage says it serves small, midsize and enterprise companies, though reviewers flag cost as a concern for smaller organizations and startups.",
+    "features": {
+      "free_trial": false,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://lattice.com/pricing",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Instawork",
+    "category": "staff_hiring",
+    "price_monthly": null,
+    "custom_pricing": true,
+    "price_note": "pay when you book a shift",
+    "summary": "Instawork is a flexible staffing platform that connects businesses with local, background-checked workers for shifts, temp-to-hire and full-time roles. It serves hospitality, warehouse and logistics, manufacturing and retail in the U.S. and Canada. Its AI features include worker matching, skill assessments and predictive AI to reduce no-shows, and it handles payroll, taxes and insurance. The homepage is inconsistent about its size, quoting the worker network as 7M+ in one place and over 9 million in another.",
+    "features": {
+      "free_trial": false,
+      "month_to_month": false,
+      "mobile_app": true,
+      "works_with_common_tools": false
+    },
+    "source_url": "https://www.instawork.com",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Workstream",
+    "category": "staff_hiring",
+    "price_monthly": null,
+    "custom_pricing": true,
+    "price_note": "8 months Payroll free",
+    "summary": "Workstream is an HR, hiring and payroll platform for businesses with hourly workers across multiple locations, and it calls itself an “AI-native operating platform.” Its AI features include VoiceAI that answers applicant calls, VideoAI for recorded interview answers, Payroll AI that flags issues before payday, and compliance checks for things like missed breaks and expiring I-9s. It targets multi-location restaurants, retail, healthcare and hospitality, and says it works with 46 of the top 50 restaurant brands. A review notes that smaller operators with infrequent hiring may not use the recruiting tools fully.",
     "features": {
       "free_trial": false,
       "month_to_month": false,
       "mobile_app": true,
       "works_with_common_tools": true
     },
-    "source_url": "https://example.com/mock-compliance-a",
+    "source_url": "https://www.workstream.us/pricing",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Ramp",
+    "category": "money_bookkeeping",
+    "price_monthly": 0,
+    "custom_pricing": false,
+    "price_note": "30 day free trial",
+    "summary": "Ramp is a spend management platform that combines corporate cards, expenses, bill payments and banking, plus accounting automation and procurement. Its AI features include Ramp Intelligence, Policy Agents that learn from how a team spends, and automated receipt handling. It targets startups through enterprises, and the homepage cites 85,000+ customer teams.",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "http://ramp.com/pricing",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Intuit Assist",
+    "category": "money_bookkeeping",
+    "price_monthly": null,
+    "custom_pricing": false,
+    "price_note": "50% off for 3 months, free trial for 30 days",
+    "summary": "Intuit Assist, which QuickBooks pages now call Intuit Intelligence, is the AI layer built into QuickBooks Online. It categorizes expenses, flags tax deductions, reconciles transactions automatically, spots anomalies, and handles tasks like invoicing and payments.",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://quickbooks.intuit.com/pricing/",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Xero",
+    "category": "money_bookkeeping",
+    "price_monthly": 10,
+    "custom_pricing": false,
+    "price_note": "1 month free, 5.40 for the first three months (Early plan) or 11.80 for the first three months (Growing plan)",
+    "summary": "Xero is cloud accounting software for small businesses, with invoicing, bill payments, bank reconciliation, cash flow forecasting and reporting. Smart Document Capture and bank reconciliation come on all plans, and JAX is Xero’s AI platform, described in news coverage as simplifying financial operations from document collection through to reconciliation and reporting. It suits small businesses and their accountants who want accounting with no per-user fees.",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": true,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://www.xero.com/us/pricing-plans/",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Spellbook",
+    "category": "legal_paperwork",
+    "price_monthly": null,
+    "custom_pricing": true,
+    "price_note": "Personalized pricing",
+    "summary": "Spellbook uses AI to draft, review, and annotate legal contracts directly within Microsoft Word.",
+    "features": {
+      "free_trial": true,
+      "month_to_month": false,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://spellbook.com/pricing",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "SixFifty",
+    "category": "legal_paperwork",
+    "price_monthly": 56,
+    "custom_pricing": false,
+    "price_note": "675 annual (25% off), 7 day free trial",
+    "summary": "SixFifty is an employment law and HR compliance platform. It combines legal research with document generation for hiring, handbooks, separation and policy documents, plus digital labor law posters and case management. Its AI features include Ask SixFifty AI (included in all plans), AI-powered legal updates and alerts, and automated policy updates. It covers federal law, all 50 states and major cities, and its documents are drafted by employment attorneys.",
+    "features": {
+      "free_trial": true,
+      "month_to_month": true,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://www.sixfifty.com/pricing/",
+    "last_verified": "2026-11-08"
+  },
+  {
+    "name": "Vanta",
+    "category": "legal_paperwork",
+    "price_monthly": null,
+    "custom_pricing": true,
+    "price_note": "Personalized pricing",
+    "summary": "Vanta is a compliance and trust platform that automates the work of getting and keeping certifications such as SOC 2, ISO 27001, HIPAA, PCI and GDPR. It collects evidence automatically, generates policies, manages risk and vendor reviews, and publishes a Trust Center. Its AI features include the Vanta AI Agent, AI questionnaire automation and AI-generated code to fix failing tests. It targets startups, mid-market and enterprise companies, especially in healthcare, government and fintech.",
+    "features": {
+      "free_trial": false,
+      "month_to_month": false,
+      "mobile_app": false,
+      "works_with_common_tools": true
+    },
+    "source_url": "https://www.vanta.com/pricing",
     "last_verified": "2026-11-08"
   }
 ]

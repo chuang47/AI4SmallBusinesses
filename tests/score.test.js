@@ -52,9 +52,9 @@ test("an owner with two problems isn't penalised (scores don't drop)", () => {
 
 test("reasons come from the data", () => {
   const [within] = run({ problems: ["staff"], budget: 100 }, [tool("A", "staff", 80, half)]);
-  assert.deepStrictEqual(within.reasons, ["Passes 2 of 4 small-business checks", "Within your $100/month budget"]);
+  assert.deepStrictEqual(within.reasons, ["Passes 2 of 4 small-business checks", "Starting price fits your $100/month budget"]);
   const [over] = run({ problems: ["staff"], budget: 30 }, [tool("A", "staff", 35.99, all)]);
-  assert.ok(over.reasons.includes("$5.99 over your $30/month budget"), "no float noise with cents");
+  assert.ok(over.reasons.includes("Starting price is $5.99 over your $30/month budget"), "no float noise with cents");
   const [noBudget] = run({ problems: ["staff"], budget: null }, [tool("A", "staff", 10, all)]);
   assert.deepStrictEqual(noBudget.reasons, ["Passes 4 of 4 small-business checks"]);
   const [custom] = run({ problems: ["staff"], budget: 100 }, [tool("A", "staff", null, all, { custom_pricing: true })]);

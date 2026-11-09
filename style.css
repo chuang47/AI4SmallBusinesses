@@ -522,10 +522,33 @@ a {
   margin: 8px 0 4px;
 }
 
+.summary-wrap {
+  margin: 16px 0;
+}
+
 .summary {
   font-size: 17px;
   line-height: 1.5;
-  margin: 16px 0;
+  margin: 0;
+}
+
+/* First 4 lines only, until "Read more". */
+.summary.clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+
+.read-more {
+  margin-top: 4px;
+  padding: 0;
+  font-size: 14px;
+  color: #444;
+  background: none;
+  border: none;
+  text-decoration: underline;
 }
 
 .match {

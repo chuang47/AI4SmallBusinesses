@@ -36,6 +36,9 @@ function parseCsv(text) {
   return rows;
 }
 
+// Other column names the team's sheet may use for the same thing.
+const ALIASES = { last_verified_date: "last_verified" };
+
 const BOOL = { true: true, yes: true, y: true, false: false, no: false, n: false, "": false };
 
 // Sheets may export dates as 11/8/2026 depending on the cell format; store YYYY-MM-DD.
@@ -48,7 +51,10 @@ function toIsoDate(value) {
 // rows: parsed CSV including the header. Returns { tools, errors, warnings }.
 function convert(rows, { categories, checks }) {
   const errors = [], warnings = [], tools = [];
-  const header = (rows[0] || []).map((h) => h.trim().toLowerCase());
+  const header = (rows[0] || []).map((h) => {
+    const name = h.trim().toLowerCase();
+    return ALIASES[name] || name;
+  });
   const missing = COLUMNS.filter((c) => !header.includes(c));
   if (missing.length) return { tools, warnings, errors: [`Missing column(s): ${missing.join(", ")}. Expected: ${COLUMNS.join(", ")}`] };
 
@@ -88,11 +94,17 @@ function convert(rows, { categories, checks }) {
       return BOOL[raw];
     };
 
+    const custom = bool("custom_pricing");
+    // 0 means "has a free plan" and ranks as the cheapest option, so it shouldn't be used for "contact sales".
+    if (price === 0 && custom) {
+      warnings.push(`${where}: price 0 means a free plan, but custom_pricing is TRUE. If there's no free plan, leave the price blank.`);
+    }
+
     tools.push({
       name,
       category,
       price_monthly: price,
-      custom_pricing: bool("custom_pricing"),
+      custom_pricing: custom,
       price_note: get("price_note"),
       summary: get("summary"),
       features: Object.fromEntries(checkKeys.map((k) => [k, bool(k)])),

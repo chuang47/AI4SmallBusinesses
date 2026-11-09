@@ -114,7 +114,7 @@
     const neverAnswered = !useSample && (!Array.isArray(responses) || responses.length === 0);
     if (neverAnswered) location.replace("index.html");
     const $ = (id) => document.getElementById(id);
-    let categories, checks, config, data;
+    let categories, checks, data;
     let current = null; // name of the tool shown on the right
     let sortBy = "match";
     let filterCats = new Set(); // categories currently shown in the list
@@ -127,8 +127,11 @@
       return node;
     }
     const money = (n) => `$${Number.isInteger(n) ? n : n.toFixed(2)}`;
+    // Prices are each tool's cheapest plan; owners choose the tier that fits them on the vendor's page.
     const price = (t) =>
-      t.price_monthly != null ? `${money(t.price_monthly)}/month` : t.custom_pricing ? "Contact sales for pricing" : "Price not published";
+      t.price_monthly === 0 ? "Free plan available"
+        : t.price_monthly != null ? `Starting from ${money(t.price_monthly)}/month`
+        : t.custom_pricing ? "Contact sales for pricing" : "Price not published";
     const labelOf = (id) => (categories.find((c) => c.id === id) || {}).label || id;
     const tag = (rec) => el("span", { className: "tag", textContent: labelOf(rec.category) });
     // "4.5/5" on screen; screen readers hear "Match 4.5 out of 5".
@@ -154,8 +157,7 @@
     async function load() {
       show("loading");
       try {
-        [categories, checks, config] = await Promise.all(
-          ["categories", "checks", "config"].map((f) => getJson(`data/${f}.json`)));
+        [categories, checks] = await Promise.all(["categories", "checks"].map((f) => getJson(`data/${f}.json`)));
         const key = JSON.stringify(responses);
         let cached = null;
         try { cached = JSON.parse(localStorage.getItem("results")); } catch {}
@@ -333,8 +335,8 @@
         el("div", { className: "detail-head" }, el("h2", { textContent: rec.name }), matchBadge(rec)),
         el("p", { className: "detail-price", textContent: price(rec) }),
         rec.price_note ? el("p", { className: "meta", textContent: rec.price_note }) : "",
-        el("p", { className: "meta", textContent: `Estimated for a business with about ${config.reference_shop.replace("employees", "staff")}. Tools that charge per person or per location may cost you more or less.` }),
-        el("p", { className: "summary", textContent: rec.summary }),
+        el("p", { className: "meta", textContent: "Cheapest plan shown. Bigger plans cost more; check the pricing page for the one that fits you." }),
+        summaryBlock(rec.summary),
         el("h3", { className: "label", textContent: "Why it fits" }),
         el("ul", { className: "reasons" }, ...rec.reasons.map((r) => el("li", { textContent: r }))),
         el("h3", { className: "label", textContent: "Small-business checks" }),
@@ -345,6 +347,22 @@
           el("a", { href: rec.source_url, target: "_blank", rel: "noopener", textContent: "View pricing source", ariaLabel: `${rec.name} pricing source (opens in a new tab)` })),
         el("p", { className: "meta", textContent: `Last verified ${rec.last_verified}` }),
       );
+    }
+
+    // Long summaries show 4 lines with "Read more", so one wordy tool doesn't stretch all three panels.
+    function summaryBlock(text) {
+      const p = el("p", { className: "summary clamped", id: "summaryText", textContent: text });
+      const more = el("button", { type: "button", className: "read-more", textContent: "Read more", hidden: true });
+      more.setAttribute("aria-controls", "summaryText");
+      more.setAttribute("aria-expanded", "false");
+      more.addEventListener("click", () => {
+        const open = p.classList.toggle("clamped") === false;
+        more.textContent = open ? "Show less" : "Read more";
+        more.setAttribute("aria-expanded", String(open));
+      });
+      // Only offer the button when the text is actually cut off.
+      requestAnimationFrame(() => { more.hidden = p.scrollHeight <= p.clientHeight + 1; });
+      return el("div", { className: "summary-wrap" }, p, more);
     }
 
     // Running total of the tools they picked. Unpublished prices are named, never guessed.
@@ -364,7 +382,7 @@
         const open = el("button", { className: "receipt-name", textContent: t.name });
         open.addEventListener("click", () => { current = t.name; filterCats.add(t.category); update(); });
         return el("li", {}, open,
-          el("span", { className: "receipt-price", textContent: t.price_monthly != null ? money(t.price_monthly) : "—" }),
+          el("span", { className: "receipt-price", textContent: t.price_monthly === 0 ? "Free" : t.price_monthly != null ? `from ${money(t.price_monthly)}` : "—" }),
           remove);
       };
 
@@ -372,7 +390,7 @@
         el("ul", { className: "receipt-lines" }, ...tools.map(line)),
         el("p", { className: "receipt-total", role: "status" },
           el("span", { textContent: "Total" }),
-          el("span", { textContent: priced.length ? `${money(total)}/month` : "—" })),
+          el("span", { textContent: priced.length ? `from ${money(total)}/month` : "—" })),
         unpriced ? el("p", { className: "receipt-note", textContent: `+ ${unpriced} without a listed price (contact the vendor)` }) : "",
         tools.length >= 2
           ? compareButton(tools.length)

@@ -79,3 +79,21 @@ test("blank lines are skipped", () => {
   assert.deepStrictEqual(errors, []);
   assert.strictEqual(tools.length, 1);
 });
+
+test("accepts last_verified_date as the date column", () => {
+  const header = COLUMNS.join(",").replace("last_verified", "last_verified_date");
+  const { tools, errors } = convert(parseCsv(`${header}\n${good}`), { categories, checks });
+  assert.deepStrictEqual(errors, []);
+  assert.strictEqual(tools[0].last_verified, "2026-11-08");
+});
+
+test("warns when a contact-sales tool is priced at $0", () => {
+  const { warnings } = importCsv(good.replace(",35,FALSE,", ",0,TRUE,"));
+  assert.ok(warnings.some((w) => /price 0 means a free plan, but custom_pricing is TRUE/.test(w)));
+});
+
+test("trims stray spaces around links", () => {
+  const { tools, errors } = importCsv(good.replace("https://a.com", "https://a.com "));
+  assert.deepStrictEqual(errors, []);
+  assert.strictEqual(tools[0].source_url, "https://a.com");
+});
